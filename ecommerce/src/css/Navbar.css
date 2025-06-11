@@ -1,0 +1,383 @@
+.navbar {
+  background: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 80px;
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.nav-brand:hover {
+  transform: scale(1.05);
+}
+
+.brand-icon {
+  font-size: 32px;
+}
+
+.brand-text {
+  font-size: 24px;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: transparent;
+  color: var(--text-gray);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-white);
+  transform: translateY(-2px);
+}
+
+.nav-link.active {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+}
+
+.nav-icon {
+  font-size: 18px;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.search-btn, .cart-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-white);
+  padding: 12px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.search-btn:hover, .cart-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--accent-orange);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.contact-btn {
+  font-size: 14px;
+  padding: 10px 20px;
+}
+
+.vertical-navbar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 280px;
+  background: linear-gradient(180deg, rgba(26, 26, 26, 0.98) 0%, rgba(45, 45, 45, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+  overflow-x: hidden; /* Add this to prevent horizontal scrolling */
+}
+
+.nav-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px 20px;
+  gap: 32px;
+  overflow-x: hidden; /* Add this to prevent horizontal scrolling */
+}
+
+/* Brand Section */
+.nav-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Changed from center to flex-start */
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+}
+
+.nav-brand:hover {
+  transform: scale(1.05);
+}
+
+.brand-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.brand-text {
+  font-size: 20px;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: left; /* Changed from center to left */
+}
+
+/* Navigation Links */
+.nav-links {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start; /* Added this to align items to the left */
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden; /* Add this to prevent horizontal scrolling */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.nav-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  padding-left: 0; /* Changed from 16px to 0 */
+  text-align: left; /* Added this to align text to the left */
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Changed from center to flex-start */
+  gap: 16px;
+  padding: 16px 20px;
+  background: transparent;
+  color: var(--text-gray);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: calc(100% - 8px); /* Slightly reduce width to prevent overflow */
+  text-align: left; /* Added this to align text to the left */
+  box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: var(--gradient-primary);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-white);
+  transform: translateX(8px);
+}
+
+.nav-link:hover::before {
+  transform: scaleY(1);
+}
+
+.nav-link.active {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.2) 0%, rgba(247, 147, 30, 0.1) 100%);
+  color: white;
+  box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+}
+
+.nav-link.active::before {
+  transform: scaleY(1);
+}
+
+.nav-icon {
+  font-size: 24px;
+  min-width: 24px;
+}
+
+.nav-label {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Action Buttons */
+.nav-actions {
+  display: flex;
+  flex-direction: row; /* Changed from column to row */
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  align-items: center; /* Added this for vertical centering */
+  justify-content: flex-start; /* Added this to align items to the left */
+  overflow: hidden; /* Add this to prevent overflow */
+  flex-wrap: wrap; /* Allow wrapping if needed */
+}
+
+.action-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-white);
+  padding: 16px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--accent-orange);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.contact-btn {
+  width: auto; /* Changed from 100% to auto */
+  padding: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 12px;
+  margin-top: 0; /* Changed from 8px to 0 */
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .vertical-navbar {
+    width: 80px;
+  }
+  
+  .nav-container {
+    padding: 20px 8px;
+  }
+  
+  .brand-text,
+  .nav-label,
+  .nav-section-title {
+    display: none;
+  }
+  
+  .brand-icon {
+    font-size: 32px;
+  }
+  
+  .nav-link {
+    padding: 16px 12px;
+    justify-content: center; /* This overrides the flex-start for mobile view */
+  }
+  
+  .nav-icon {
+    font-size: 20px;
+  }
+
+  .nav-actions {
+    flex-direction: column; /* Back to column for mobile */
+    align-items: center; /* Center for mobile */
+  }
+  
+  .contact-btn {
+    padding: 12px 8px;
+    font-size: 12px;
+    width: 100%; /* Back to 100% for mobile */
+  }
+  
+  .action-btn {
+    padding: 12px;
+  }
+}
+
+/* Smooth scrolling for navigation */
+/* .nav-links {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+} */
+
+/* .nav-links::-webkit-scrollbar {
+  width: 4px;
+}
+
+.nav-links::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.nav-links::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.nav-links::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+} */

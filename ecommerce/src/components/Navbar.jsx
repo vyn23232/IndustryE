@@ -22,7 +22,8 @@ const Navbar = ({ currentPage, setCurrentPage, cartItemCount = 0, isAuthenticate
 
   const authPages = [
     { id: 'login', label: 'Login', icon: '🔑' },
-    { id: 'signup', label: 'Sign Up', icon: '👤' }
+    { id: 'signup', label: 'Sign Up', icon: '👤' },
+    { id: 'cart', label: 'Cart', icon: '🛒' }
   ]
 
   const handleBrandClick = () => {
@@ -30,6 +31,14 @@ const Navbar = ({ currentPage, setCurrentPage, cartItemCount = 0, isAuthenticate
       setCurrentPage('home')
     } else {
       setCurrentPage('landing')
+    }
+  }
+
+  const  handleCartClick = () => {
+    if (isAuthenticated) {
+      setCurrentPage('cart')
+    } else {
+      alert('Please log in to view your cart.')
     }
   }
   // END NEW CODE: Separate navigation
@@ -127,13 +136,15 @@ const Navbar = ({ currentPage, setCurrentPage, cartItemCount = 0, isAuthenticate
         {/* Action Buttons - Only show when authenticated */}
         {isAuthenticated && (
           <div className="nav-actions">
-            <button className="action-btn search-btn" title="Search">
-              <span>🔍</span>
-            </button>
-            <button className="action-btn cart-btn" title="Cart">
-              <span>🛒</span>
-              <span className="cart-count">{cartItemCount}</span>
-            </button>
+            <div className="action-buttons">
+              <button className="search-btn" title="Search">
+                <span>🔍</span>
+              </button>
+              <button onClick={handleCartClick} className="cart-btn" title="Cart">
+                <span>🛒</span>
+                <span className="cart-count">{cartItemCount}</span>
+              </button>
+            </div>
             <button className="contact-btn btn-primary">
               Contact Us
             </button>

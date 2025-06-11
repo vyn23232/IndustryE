@@ -18,6 +18,15 @@ const HomePage = ({ currentPage, setCurrentPage }) => {
     }
   }
 
+  const handleCartClick = () => {
+    if (categoryId === 'cart') {
+      setCurrentPage('shoes')
+    } else {
+      // For other categories, you can add alerts or placeholder behavior
+      alert(`${categories.find(cat => cat.id === categoryId)?.name} section coming soon!`)
+    }
+  }
+
   return (
     <div className="home-page">
       {/* Hero Section */}

@@ -99,13 +99,19 @@ const Navbar = ({ currentPage, setCurrentPage, cartItemCount = 0, isAuthenticate
           {isAuthenticated && (
             <>
               <div className="nav-section-title" style={{marginTop: '20px'}}>Account</div>
-              <div className="user-info">
-                <div className="user-avatar">👤</div>
-                <div className="user-details">
-                  <div className="user-name">{user?.name}</div>
-                  <div className="user-email">{user?.email}</div>
+              <button 
+                className="nav-link"
+                onClick={() => setCurrentPage('profile')}
+              >
+                <div className="user-info">
+                  <div className="user-avatar">👤</div>
+                  <div className="user-details">
+                    <div className="user-name">{user?.name}</div>
+                    <div className="user-email">{user?.email}</div>
+                  </div>
                 </div>
-              </div>
+              </button>
+
               <button
                 className="nav-link logout-btn"
                 onClick={onLogout}

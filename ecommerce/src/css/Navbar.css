@@ -313,7 +313,7 @@
   margin-top: 0; /* Changed from 8px to 0 */
 }
 
-/* User Info Styles */
+/* User Info Styles - Updated for better text fit */
 .user-info {
   display: flex;
   align-items: center;
@@ -323,12 +323,15 @@
   border-radius: 12px;
   margin-bottom: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  width: calc(100% - 8px); /* Match nav-link width */
+  box-sizing: border-box;
 }
 
 .user-avatar {
   font-size: 24px;
   width: 40px;
-  height: 40px;
+  height: px;
+  min-width: 40px; /* Prevent shrinking */
   background: var(--gradient-primary);
   border-radius: 50%;
   display: flex;
@@ -341,6 +344,8 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0; /* Allow proper text truncation */
+  overflow: hidden; /* Prevent overflow */
 }
 
 .user-name {
@@ -348,6 +353,9 @@
   font-weight: 600;
   color: var(--text-white);
   text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-email {

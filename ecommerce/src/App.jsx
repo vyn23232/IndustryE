@@ -8,6 +8,11 @@ import AboutPage from './pages/AboutPage'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
+import ProfilePage from './pages/ProfilePage'
+
+
+
+
 
 function App() {
   const [currentPage, setCurrentPage] = useState('landing')
@@ -85,6 +90,10 @@ function App() {
         return <ShoesPage addToCart={addToCart} />
       case 'about':
         return <AboutPage />
+      case 'profile':
+        return isAuthenticated ? 
+          <ProfilePage user={user} setCurrentPage={setCurrentPage} /> : 
+          <LandingPage setCurrentPage={setCurrentPage} /> 
       default:
         return isAuthenticated ? 
           <HomePage currentPage={currentPage} setCurrentPage={setCurrentPage} /> : 

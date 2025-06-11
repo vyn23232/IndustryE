@@ -1,2 +1,2 @@
-# IndustryE
-React Project
+# React Project Midyear
+E-Commerce Website

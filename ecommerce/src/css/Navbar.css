@@ -76,41 +76,56 @@
 
 .nav-actions {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
 }
 
 .search-btn, .cart-btn {
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-white);
-  padding: 12px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   transition: all 0.3s ease;
   position: relative;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .search-btn:hover, .cart-btn:hover {
   background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .cart-count {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -5px;
+  right: -5px;
   background: var(--accent-orange);
   color: white;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   padding: 2px 6px;
   border-radius: 10px;
-  min-width: 18px;
+  min-width: 15px;
   text-align: center;
+  z-index: 1;
 }
 
 .contact-btn {
+  width: 100%;
+  padding: 12px;
   font-size: 14px;
-  padding: 10px 20px;
+  font-weight: 600;
+  border-radius: 12px;
+  margin-top: 0;
 }
 
 .vertical-navbar {
@@ -259,15 +274,17 @@
 /* Action Buttons */
 .nav-actions {
   display: flex;
-  flex-direction: row; /* Changed from column to row */
+  flex-direction: column;
   gap: 16px;
   padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   width: 100%;
-  align-items: center; /* Added this for vertical centering */
-  justify-content: flex-start; /* Added this to align items to the left */
-  overflow: hidden; /* Add this to prevent overflow */
-  flex-wrap: wrap; /* Allow wrapping if needed */
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
 .action-btn {
@@ -292,25 +309,109 @@
 
 .cart-count {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -5px;
+  right: -5px;
   background: var(--accent-orange);
   color: white;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 12px;
-  min-width: 20px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 15px;
   text-align: center;
+  z-index: 1;
 }
 
 .contact-btn {
-  width: auto; /* Changed from 100% to auto */
-  padding: 16px;
+  width: 100%;
+  padding: 12px;
   font-size: 14px;
   font-weight: 600;
   border-radius: 12px;
-  margin-top: 0; /* Changed from 8px to 0 */
+  margin-top: 0;
+}
+
+/* User Info Styles - Updated for better text fit */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: calc(100% - 8px); /* Match nav-link width */
+  box-sizing: border-box;
+}
+
+.user-avatar {
+  font-size: 24px;
+  width: 40px;
+  height: px;
+  min-width: 40px; /* Prevent shrinking */
+  background: var(--gradient-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0; /* Allow proper text truncation */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-white);
+  text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-email {
+  font-size: 12px;
+  color: var(--text-gray);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  background: rgba(255, 107, 53, 0.1);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 53, 0.3);
+}
+
+.logout-btn:hover {
+  background: rgba(255, 107, 53, 0.2);
+  color: white;
+  transform: translateX(8px);
+}
+
+/* Mobile adjustments for user info */
+@media (max-width: 768px) {
+  .user-info {
+    padding: 12px;
+    justify-content: center;
+  }
+  
+  .user-details {
+    display: none;
+  }
+  
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
 }
 
 /* Mobile Responsive */

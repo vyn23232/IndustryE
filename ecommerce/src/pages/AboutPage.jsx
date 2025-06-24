@@ -1,41 +1,42 @@
+import React from 'react'
 import '../css/AboutPage.css'
 
 const AboutPage = () => {
   const stats = [
-    { number: '500K+', label: 'Happy Customers' },
-    { number: '1M+', label: 'Products Sold' },
-    { number: '10+', label: 'Categories' },
-    { number: '99%', label: 'Customer Satisfaction' }
-  ]
-
-  const team = [
-    { name: 'Sarah Johnson', role: 'CEO & Founder', emoji: '👩‍💼' },
-    { name: 'Mike Chen', role: 'CTO', emoji: '👨‍💻' },
-    { name: 'Emily Davis', role: 'Head of Marketing', emoji: '👩‍🎨' },
-    { name: 'James Wilson', role: 'Operations Manager', emoji: '👨‍💼' }
+    { number: '10+', label: 'Years in Business' },
+    { number: '50k+', label: 'Happy Customers' },
+    { number: '500+', label: 'Shoe Models' },
+    { number: '100+', label: 'Brand Partners' }
   ]
 
   const values = [
     {
-      icon: '⭐',
-      title: 'Quality First',
-      description: 'We ensure every product meets our high standards before reaching our customers.'
+      icon: '👞',
+      title: 'Quality',
+      description: 'We only source the highest quality footwear from trusted manufacturers and brands.'
     },
     {
-      icon: '🚚',
-      title: 'Fast Delivery',
-      description: 'Quick and reliable shipping to get your orders to you as fast as possible.'
+      icon: '🌟',
+      title: 'Excellence',
+      description: 'We strive for excellence in every aspect of our business, from selection to service.'
     },
     {
-      icon: '💯',
-      title: 'Customer Satisfaction',
-      description: 'Your happiness is our priority. We go above and beyond to exceed expectations.'
+      icon: '🤝',
+      title: 'Trust',
+      description: 'Building trust with our customers is at the core of everything we do.'
     },
     {
-      icon: '🔒',
-      title: 'Secure Shopping',
-      description: 'Shop with confidence knowing your data and transactions are protected.'
+      icon: '♻️',
+      title: 'Sustainability',
+      description: 'We\'re committed to environmentally friendly practices and sustainable footwear options.'
     }
+  ]
+
+  const team = [
+    { name: 'Robert Miller', role: 'Founder & CEO', emoji: '👨‍💼' },
+    { name: 'Emma Watson', role: 'Head of Design', emoji: '👩‍🎨' },
+    { name: 'John Garcia', role: 'Customer Experience', emoji: '👨‍💻' },
+    { name: 'Lisa Chen', role: 'Supply Chain Manager', emoji: '👩‍🔧' }
   ]
 
   return (
@@ -44,10 +45,10 @@ const AboutPage = () => {
       <section className="about-hero">
         <div className="container">
           <div className="hero-content">
-            <h1>About <span className="highlight">MultiStore</span></h1>
+            <h1>About <span className="highlight">ShoeStore</span></h1>
             <p className="hero-subtitle">
-              Your trusted multi-category e-commerce destination, bringing you the best products 
-              from electronics to fashion, all in one convenient place.
+              Your trusted footwear destination, bringing you the best shoes
+              from casual to athletic, all in one convenient place.
             </p>
           </div>
         </div>
@@ -60,23 +61,24 @@ const AboutPage = () => {
             <div className="story-text">
               <h2>Our Story</h2>
               <p>
-                Founded in 2020, MultiStore began as a vision to create the ultimate shopping 
-                destination where customers could find everything they need without the hassle 
-                of visiting multiple stores.
+                Founded in 2013, ShoeStore began as a vision to create the ultimate shoe shopping
+                destination where customers could find the perfect footwear for any occasion
+                without compromising on quality, style, or comfort.
               </p>
               <p>
-                What started as a small team with big dreams has grown into a thriving marketplace 
-                serving hundreds of thousands of customers worldwide. We've carefully curated 
-                products across 10+ categories to ensure quality, variety, and value.
+                What started as a small boutique with a handful of premium shoe brands has grown into
+                a thriving online marketplace serving customers worldwide. We've carefully curated
+                our collection to ensure that every pair of shoes we sell meets our high standards.
               </p>
               <p>
-                Today, we're proud to be your one-stop shop for electronics, fashion, home goods, 
-                and so much more. Our commitment to excellence drives everything we do.
+                Today, we're proud to offer an extensive selection of footwear, from running shoes and
+                athletic trainers to formal dress shoes, casual everyday options, and stylish boots.
+                Our commitment to quality and customer satisfaction drives everything we do.
               </p>
             </div>
             <div className="story-image">
               <div className="image-placeholder">
-                <span style={{fontSize: '100px'}}>🏢</span>
+                <span style={{fontSize: '100px'}}>👟</span>
                 <p>Our Journey</p>
               </div>
             </div>
@@ -137,21 +139,21 @@ const AboutPage = () => {
           <div className="mission-content">
             <h2>Our Mission</h2>
             <p>
-              To revolutionize online shopping by providing a seamless, secure, and satisfying 
-              experience that connects customers with the products they love across all categories.
+              To provide exceptional footwear that combines style, comfort, and durability,
+              while offering an unparalleled shopping experience that keeps customers coming back.
             </p>
             <div className="mission-points">
               <div className="point">
                 <span className="point-icon">🎯</span>
-                <span>Curate the best products from trusted suppliers</span>
+                <span>Curate the best shoes from trusted brands worldwide</span>
               </div>
               <div className="point">
                 <span className="point-icon">🌟</span>
-                <span>Deliver exceptional customer service</span>
+                <span>Deliver exceptional customer service and sizing advice</span>
               </div>
               <div className="point">
                 <span className="point-icon">🚀</span>
-                <span>Innovate and improve the shopping experience</span>
+                <span>Innovate and improve the shoe shopping experience</span>
               </div>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import '../css/AuthPage.css'
 
-const SignUpPage = ({ onSignUp, setCurrentPage }) => {
+const SignUpPage = ({ setCurrentPage, setToast }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -62,15 +62,11 @@ const SignUpPage = ({ onSignUp, setCurrentPage }) => {
     
     if (!validateForm()) {
       return
-    }
-
-    setIsLoading(true)
+    }    setIsLoading(true)
     
-    // NEW CODE: Backend-ready user registration - replace this simulation with actual API call
-    // TODO: Replace with actual backend registration
-    /*
+    // Connect to Spring Boot backend
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('http://localhost:8080/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,26 +81,30 @@ const SignUpPage = ({ onSignUp, setCurrentPage }) => {
       const data = await response.json()
       
       if (response.ok) {
-        onSignUp(data.user)
+        // Clear form data
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: ''
+        })
+        // Show success toast
+        setToast({
+          message: 'Account created successfully! Please log in with your credentials.',
+          type: 'success'
+        })
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          setCurrentPage('login')
+        }, 2000)
       } else {
-        setErrors({ general: data.message })
+        setErrors({ general: data.message || 'Registration failed. Please try again.' })
       }
     } catch (error) {
-      setErrors({ general: 'Registration failed. Please try again.' })
-    }
-    */
-    
-    // Simulate API call (remove this when implementing real backend)
-    setTimeout(() => {
-      const userData = {
-        name: formData.name,
-        email: formData.email,
-        id: Date.now()
-      }
-      onSignUp(userData)
+      setErrors({ general: 'Connection error. Please make sure the server is running.' })
+    } finally {
       setIsLoading(false)
-    }, 1500)
-    // END NEW CODE: Backend-ready user registration
+    }
   }
 
   return (
@@ -114,9 +114,13 @@ const SignUpPage = ({ onSignUp, setCurrentPage }) => {
           <div className="auth-header">
             <h1>Join MultiStore!</h1>
             <p>Create your account and start shopping</p>
-          </div>
-
-          <form className="auth-form" onSubmit={handleSubmit}>
+          </div>          <form className="auth-form" onSubmit={handleSubmit}>
+            {errors.general && (
+              <div className="error-message" style={{marginBottom: '15px', textAlign: 'center'}}>
+                {errors.general}
+              </div>
+            )}
+            
             <div className="form-group">
               <label htmlFor="name">Full Name</label>
               <input

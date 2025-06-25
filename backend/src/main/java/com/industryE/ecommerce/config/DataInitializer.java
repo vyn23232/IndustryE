@@ -18,7 +18,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Only populate if the database is empty
+        // Only populate products if the database is empty
         if (productRepository.count() == 0) {
             List<Product> sampleProducts = Arrays.asList(
                 new Product(

@@ -24,16 +24,12 @@ public class OrderService {
     private OrderRepository orderRepository;
     
     public OrderResponse createOrder(CreateOrderRequest request, User user) {
-        // Generate order number
-        String orderNumber = "ORD-" + System.currentTimeMillis();
-        
-        // Create order entity
+        // Ensure the order is properly associated with the authenticated user
         Order order = new Order();
-        order.setUser(user);
-        order.setOrderNumber(orderNumber);
+        order.setUser(user); // Critical: Set the user who owns this order
+        order.setOrderNumber(generateOrderNumber());
         order.setTotalAmount(request.getTotalAmount());
         order.setStatus("PENDING");
-        order.setOrderDate(LocalDateTime.now());
         
         // Set shipping information
         if (request.getShippingInfo() != null) {
@@ -46,33 +42,14 @@ public class OrderService {
             order.setShippingPhone(request.getShippingInfo().getPhone());
         }
         
-        // Set payment information
         order.setPaymentMethod(request.getPaymentMethod());
-        order.setPaymentStatus("PENDING");
         
-        // Create order items
-        if (request.getItems() != null) {
-            List<OrderItem> orderItems = request.getItems().stream().map(item -> {
-                OrderItem orderItem = new OrderItem();
-                orderItem.setOrder(order);
-                orderItem.setProductName(item.getName());
-                orderItem.setProductImage(item.getImage());
-                orderItem.setUnitPrice(BigDecimal.valueOf(item.getPrice()));
-                orderItem.setQuantity(item.getQuantity());
-                orderItem.setTotalPrice(BigDecimal.valueOf(item.getPrice() * item.getQuantity()));
-                return orderItem;
-            }).collect(Collectors.toList());
-            
-            order.setOrderItems(orderItems);
-        }
-        
-        // Save order
         Order savedOrder = orderRepository.save(order);
-        
         return convertToResponse(savedOrder);
     }
     
     public List<OrderResponse> getUserOrders(Long userId) {
+        // Critical fix: Only return orders that belong to the specific user
         return orderRepository.findByUserIdOrderByOrderDateDesc(userId)
                 .stream()
                 .map(this::convertToResponse)
@@ -80,9 +57,14 @@ public class OrderService {
     }
     
     public OrderResponse getOrderById(Long orderId, Long userId) {
+        // Critical fix: Ensure order belongs to the requesting user
         Order order = orderRepository.findByIdAndUserId(orderId, userId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new RuntimeException("Order not found or access denied"));
         return convertToResponse(order);
+    }
+    
+    private String generateOrderNumber() {
+        return "ORD-" + System.currentTimeMillis();
     }
     
     private OrderResponse convertToResponse(Order order) {
@@ -92,8 +74,6 @@ public class OrderService {
         response.setTotalAmount(order.getTotalAmount());
         response.setStatus(order.getStatus());
         response.setOrderDate(order.getOrderDate());
-        response.setPaymentMethod(order.getPaymentMethod());
-        response.setPaymentStatus(order.getPaymentStatus());
         
         // Set shipping info
         OrderResponse.ShippingInfo shippingInfo = new OrderResponse.ShippingInfo();

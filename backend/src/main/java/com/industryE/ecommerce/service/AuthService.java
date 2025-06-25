@@ -69,7 +69,8 @@ public class AuthService {
                     existingUser.getCreatedAt(),
                     existingUser.getPhone(),
                     existingUser.getLocation(),
-                    existingUser.getBio()
+                    existingUser.getBio(),
+                    existingUser.getRole().name()
             );
             
             System.out.println("Login successful for: " + loginRequest.getEmail());
@@ -120,7 +121,8 @@ public class AuthService {
                 savedUser.getCreatedAt(),
                 savedUser.getPhone(),
                 savedUser.getLocation(),
-                savedUser.getBio()
+                savedUser.getBio(),
+                savedUser.getRole().name()
         );
         
         System.out.println("Registration successful for: " + registerRequest.getEmail());

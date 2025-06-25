@@ -1,8 +1,10 @@
 package com.industryE.ecommerce.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.industryE.ecommerce.dto.ChangePasswordRequest;
 import com.industryE.ecommerce.dto.UpdateUserRequest;
 import com.industryE.ecommerce.dto.UserResponse;
 import com.industryE.ecommerce.entity.User;
@@ -13,6 +15,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
@@ -59,6 +64,21 @@ public class UserService {
         return convertToUserResponse(savedUser);
     }
 
+    public void changePassword(String email, ChangePasswordRequest changePasswordRequest) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Verify current password
+        if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+
+        // Update password
+        String encodedNewPassword = passwordEncoder.encode(changePasswordRequest.getNewPassword());
+        user.setPassword(encodedNewPassword);
+        userRepository.save(user);
+    }
+
     private UserResponse convertToUserResponse(User user) {
         return new UserResponse(
                 user.getId(),
@@ -67,7 +87,8 @@ public class UserService {
                 user.getCreatedAt(),
                 user.getPhone(),
                 user.getLocation(),
-                user.getBio()
+                user.getBio(),
+                user.getRole().name()
         );
     }
 }

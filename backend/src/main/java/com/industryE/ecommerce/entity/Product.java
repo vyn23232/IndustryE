@@ -39,6 +39,14 @@ public class Product {
     @Column(nullable = false)
     private String imageUrl;
     
+    // Additional images for detailed view (stored as JSON string)
+    @Column(name = "additional_images", columnDefinition = "TEXT")
+    private String additionalImages;
+    
+    // Available sizes for shoes (stored as JSON string)
+    @Column(name = "available_sizes", columnDefinition = "TEXT")
+    private String availableSizes;
+    
     @NotBlank(message = "Category is required")
     @Column(nullable = false)
     private String category;
@@ -63,6 +71,18 @@ public class Product {
         this.description = description;
         this.price = price;
         this.imageUrl = imageUrl;
+        this.category = category;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+    
+    public Product(String name, String description, Double price, String imageUrl, String additionalImages, String availableSizes, String category) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.additionalImages = additionalImages;
+        this.availableSizes = availableSizes;
         this.category = category;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -107,6 +127,22 @@ public class Product {
     
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+    
+    public String getAdditionalImages() {
+        return additionalImages;
+    }
+    
+    public void setAdditionalImages(String additionalImages) {
+        this.additionalImages = additionalImages;
+    }
+    
+    public String getAvailableSizes() {
+        return availableSizes;
+    }
+    
+    public void setAvailableSizes(String availableSizes) {
+        this.availableSizes = availableSizes;
     }
     
     public String getCategory() {

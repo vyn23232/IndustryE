@@ -69,7 +69,7 @@ public class ProductService {
     }
 
     // Helper methods
-    private ProductDTO convertToDTO(Product product) {
+    public ProductDTO convertToDTO(Product product) {
         return new ProductDTO(
                 product.getId(),
                 product.getName(),

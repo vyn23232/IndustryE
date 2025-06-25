@@ -1,7 +1,9 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import '../css/OrderConfirmationPage.css'
 
-const OrderConfirmationPage = ({ orderDetails, setCurrentPage }) => {
+const OrderConfirmationPage = ({ orderDetails }) => {
+  const navigate = useNavigate()
   return (
     <div className="order-confirmation-page">
       <div className="confirmation-container">
@@ -46,13 +48,13 @@ const OrderConfirmationPage = ({ orderDetails, setCurrentPage }) => {
         <div className="action-buttons">
           <button 
             className="btn-primary"
-            onClick={() => setCurrentPage('shoes')}
+            onClick={() => navigate('/shoes')}
           >
             Continue Shopping
           </button>
           <button 
             className="btn-secondary"
-            onClick={() => setCurrentPage('orders')}
+            onClick={() => navigate('/orders')}
           >
             View My Orders
           </button>

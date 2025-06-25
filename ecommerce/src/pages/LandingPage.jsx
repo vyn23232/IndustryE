@@ -1,7 +1,9 @@
 import React from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import '../css/LandingPage.css'
 
-const LandingPage = ({ setCurrentPage }) => {
+const LandingPage = () => {
+  const navigate = useNavigate()
   // Updated features for a shoe store
   const features = [
     {
@@ -66,18 +68,13 @@ const LandingPage = ({ setCurrentPage }) => {
                 and exceptional service.
               </p>
               <div className="hero-actions">
-                <button 
-                  className="btn-primary cta-btn"
-                  onClick={() => setCurrentPage('signup')}
-                >
+                <Link to="/signup" className="btn-primary cta-btn">
                   Get Started →
-                </button>
-                <button 
-                  className="btn-secondary"
-                  onClick={() => setCurrentPage('shoes')}
-                >
+                </Link>
+                <Link to="/shoes" className="btn-secondary">
                   Browse Collection
-                </button>
+                </Link>
+
               </div>
               <div className="hero-stats">
                 <div className="stat">
@@ -165,18 +162,12 @@ const LandingPage = ({ setCurrentPage }) => {
             <h2>Ready to Start Shopping?</h2>
             <p>Join ShoeStop today and discover amazing deals on your favorite products</p>
             <div className="cta-actions">
-              <button 
-                className="btn-primary cta-btn"
-                onClick={() => setCurrentPage('signup')}
-              >
+              <Link to="/signup" className="btn-primary cta-btn">
                 Create Account
-              </button>
-              <button 
-                className="btn-secondary explore-btn"
-                onClick={() => setCurrentPage('about')}
-              >
+              </Link>
+              <Link to="/about" className="btn-secondary explore-btn">
                 Learn More
-              </button>
+              </Link>
             </div>
           </div>
         </div>

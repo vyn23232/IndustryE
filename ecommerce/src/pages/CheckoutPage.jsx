@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import '../css/CheckoutPage.css'
 
-const CheckoutPage = ({ cart, user, setCurrentPage, onOrderComplete }) => {
+const CheckoutPage = ({ cart, user, onOrderComplete, isAuthenticated }) => {
+  const navigate = useNavigate()
   const [step, setStep] = useState(1) // 1: Shipping, 2: Payment, 3: Review
   const [shippingInfo, setShippingInfo] = useState({
     firstName: user?.name?.split(' ')[0] || '',
@@ -15,6 +18,13 @@ const CheckoutPage = ({ cart, user, setCurrentPage, onOrderComplete }) => {
   })
   const [paymentMethod, setPaymentMethod] = useState('cod')
   const [isLoading, setIsLoading] = useState(false)
+
+  // Redirect to login if not authenticated
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login')
+    }
+  }, [isAuthenticated, navigate])
 
   const paymentMethods = [
     { id: 'cod', name: 'Cash on Delivery', description: 'Pay when your order arrives' },
@@ -44,18 +54,47 @@ const CheckoutPage = ({ cart, user, setCurrentPage, onOrderComplete }) => {
   const handlePlaceOrder = async () => {
     setIsLoading(true)
     try {
-      // Simulate order processing
-      setTimeout(() => {
+      // Create order payload matching the backend's CreateOrderRequest structure
+      const orderData = {
+        totalAmount: calculateTotal(),
+        paymentMethod: paymentMethod,
+        shippingInfo: {
+          firstName: shippingInfo.firstName,
+          lastName: shippingInfo.lastName,
+          address: shippingInfo.address,
+          city: shippingInfo.city,
+          province: shippingInfo.province,
+          postalCode: shippingInfo.postalCode,
+          phone: shippingInfo.phone
+        },
+        items: cart.map(item => ({
+          name: item.name,
+          image: item.image || 'https://via.placeholder.com/200',
+          price: item.price,
+          quantity: item.quantity
+        }))
+      }
+
+      console.log('Sending order data:', orderData) // Debug log
+
+      // Submit order to backend
+      const response = await axios.post('http://localhost:8080/api/orders/create', orderData)
+      
+      if (response.data) {
+        // Order successfully created
         onOrderComplete({
-          orderNumber: 'ORD-' + Date.now(),
+          orderNumber: response.data.orderNumber || 'ORD-' + Date.now(),
           totalAmount: calculateTotal(),
-          status: 'PENDING'
+          status: 'PENDING',
+          orderId: response.data.id
         })
-        setCurrentPage('order-confirmation')
-        setIsLoading(false)
-      }, 2000)
+        navigate('/order-confirmation')
+      }
     } catch (error) {
       console.error('Order failed:', error)
+      console.error('Error details:', error.response?.data)
+      alert(`Failed to place order: ${error.response?.data?.message || error.message}`)
+    } finally {
       setIsLoading(false)
     }
   }

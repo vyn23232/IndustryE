@@ -1,17 +1,48 @@
 import React from "react"
+import { useNavigate } from 'react-router-dom'
 import '../css/CartPage.css'
 
-const CartPage = ({ cart, updateQuantity, removeFromCart, setCurrentPage }) => {
+const CartPage = ({ cart, updateQuantity, removeFromCart, isAuthenticated, user }) => {
+  const navigate = useNavigate()
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0)
   }
 
   const handleContinueShopping = () => {
-    setCurrentPage('shoes');
+    navigate('/shoes')
   }
 
   const handleCheckout = () => {
-    setCurrentPage('checkout')
+    if (isAuthenticated) {
+      navigate('/checkout')
+    } else {
+      navigate('/login')
+    }
+  }
+
+  const handleLogin = () => {
+    navigate('/login')
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="cart-page">
+        <div className="cart-container">
+          <div className="cart-empty">
+            <h2>Please Log In to View Your Cart</h2>
+            <p>You need to be logged in to access your shopping cart and make purchases.</p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '2rem' }}>
+              <button className="btn-primary" onClick={handleLogin}>
+                Log In
+              </button>
+              <button className="btn-secondary" onClick={handleContinueShopping}>
+                Continue Shopping
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (!cart || cart.length === 0) {
@@ -92,9 +123,20 @@ const CartPage = ({ cart, updateQuantity, removeFromCart, setCurrentPage }) => {
             <span>Total</span>
             <span>₱ {calculateTotal().toFixed(2)}</span>
           </div>
-          <button className="checkout-btn btn-primary" onClick={handleCheckout}>
-            Proceed to Checkout
-          </button>
+          
+          {isAuthenticated ? (
+            <button className="checkout-btn btn-primary" onClick={handleCheckout}>
+              Proceed to Checkout
+            </button>
+          ) : (
+            <div className="auth-required">
+              <p className="auth-message">Please log in to complete your purchase</p>
+              <button className="login-btn btn-primary" onClick={handleLogin}>
+                Log In to Checkout
+              </button>
+              <p className="guest-info">Don't have an account? <a href="/signup">Sign up here</a></p>
+            </div>
+          )}
         </div>
       </div>
     </div>

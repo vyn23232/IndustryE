@@ -7,13 +7,7 @@ const HomePage = ({ setCurrentPage }) => {
     setCurrentPage('shoes')
   }, [setCurrentPage])
   
-  const categories = [
-    { id: 'shoes', name: 'Shoes', icon: '👟', color: '#ff6b35' },
-    { id: 'pc-parts', name: 'PC Parts', icon: '🖥️', color: '#4dabf7' },
-    { id: 'concert-tickets', name: 'Concert Tickets', icon: '🎵', color: '#9775fa' },
-    { id: 'game-items', name: 'Game Items', icon: '🎮', color: '#51cf66' },
-    { id: 'drugs', name: 'Health & Wellness', icon: '💊', color: '#ffd43b' }
-  ]
+
 
   const handleCategoryClick = (categoryId) => {
     if (categoryId === 'shoes') {

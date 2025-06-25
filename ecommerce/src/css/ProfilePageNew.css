@@ -16,7 +16,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
-  margin-left: 280px;
+  margin-left: 140px; /* Reduced from 280px to center more to the left-middle */
   height: 100vh;
   overflow: hidden;
   display: flex;

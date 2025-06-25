@@ -14,6 +14,11 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
+
     public UserResponse getUserProfile(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -55,7 +60,7 @@ public class UserService {
     }
 
     private UserResponse convertToUserResponse(User user) {
-        UserResponse response = new UserResponse(
+        return new UserResponse(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
@@ -64,7 +69,5 @@ public class UserService {
                 user.getLocation(),
                 user.getBio()
         );
-        
-        return response;
     }
 }

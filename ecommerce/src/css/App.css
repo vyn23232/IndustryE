@@ -11,6 +11,8 @@
   min-height: 100vh;
   width: calc(100% - 280px);
   transition: all 0.3s ease;
+  overflow-x: hidden;
+  position: relative;
 }
 
 /* Mobile responsive */
@@ -36,6 +38,8 @@
   border-radius: 8px;
   font-weight: 600;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
@@ -44,15 +48,23 @@
 }
 
 .btn-secondary {
-  background: var(--gradient-secondary);
-  color: white;
+  background: transparent;
+  color: var(--text-white);
   padding: 12px 24px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   font-weight: 600;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .btn-secondary:hover {
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Add some debug styles to see if content is there */
+.main-content > * {
+  min-height: 100vh;
 }

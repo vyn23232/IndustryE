@@ -1,0 +1,79 @@
+package com.industryE.ecommerce.dto;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+public class CreateOrderRequest {
+    private BigDecimal totalAmount;
+    private String paymentMethod;
+    private ShippingInfo shippingInfo;
+    private List<OrderItemRequest> items;
+    
+    // Constructors
+    public CreateOrderRequest() {}
+    
+    // Getters and setters
+    public BigDecimal getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
+    
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+    
+    public ShippingInfo getShippingInfo() { return shippingInfo; }
+    public void setShippingInfo(ShippingInfo shippingInfo) { this.shippingInfo = shippingInfo; }
+    
+    public List<OrderItemRequest> getItems() { return items; }
+    public void setItems(List<OrderItemRequest> items) { this.items = items; }
+    
+    public static class ShippingInfo {
+        private String firstName;
+        private String lastName;
+        private String address;
+        private String city;
+        private String province;
+        private String postalCode;
+        private String phone;
+        
+        // Getters and setters
+        public String getFirstName() { return firstName; }
+        public void setFirstName(String firstName) { this.firstName = firstName; }
+        
+        public String getLastName() { return lastName; }
+        public void setLastName(String lastName) { this.lastName = lastName; }
+        
+        public String getAddress() { return address; }
+        public void setAddress(String address) { this.address = address; }
+        
+        public String getCity() { return city; }
+        public void setCity(String city) { this.city = city; }
+        
+        public String getProvince() { return province; }
+        public void setProvince(String province) { this.province = province; }
+        
+        public String getPostalCode() { return postalCode; }
+        public void setPostalCode(String postalCode) { this.postalCode = postalCode; }
+        
+        public String getPhone() { return phone; }
+        public void setPhone(String phone) { this.phone = phone; }
+    }
+    
+    public static class OrderItemRequest {
+        private String name;
+        private String image;
+        private double price;
+        private int quantity;
+        
+        // Getters and setters
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        
+        public String getImage() { return image; }
+        public void setImage(String image) { this.image = image; }
+        
+        public double getPrice() { return price; }
+        public void setPrice(double price) { this.price = price; }
+        
+        public int getQuantity() { return quantity; }
+        public void setQuantity(int quantity) { this.quantity = quantity; }
+    }
+}

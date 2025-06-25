@@ -10,6 +10,10 @@ const CartPage = ({ cart, updateQuantity, removeFromCart, setCurrentPage }) => {
     setCurrentPage('shoes');
   }
 
+  const handleCheckout = () => {
+    setCurrentPage('checkout')
+  }
+
   if (!cart || cart.length === 0) {
     return (
       <div className="cart-empty">
@@ -88,7 +92,7 @@ const CartPage = ({ cart, updateQuantity, removeFromCart, setCurrentPage }) => {
             <span>Total</span>
             <span>₱ {calculateTotal().toFixed(2)}</span>
           </div>
-          <button className="checkout-btn btn-primary">
+          <button className="checkout-btn btn-primary" onClick={handleCheckout}>
             Proceed to Checkout
           </button>
         </div>

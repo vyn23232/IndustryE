@@ -10,33 +10,47 @@ import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
 import CartPage from './pages/CartPage'
 import ProfilePage from './pages/ProfilePage'
-
+import CheckoutPage from './pages/CheckoutPage'
+import OrderConfirmationPage from './pages/OrderConfirmationPage'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('landing')
   const [cart, setCart] = useState([])
-  const [toast, setToast] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState(null)
+  const [toast, setToast] = useState(null)
+  const [orderDetails, setOrderDetails] = useState(null)
 
-  // Load saved user data from localStorage on app startup
+  // Initialize authentication state from localStorage
   useEffect(() => {
-    const savedUser = localStorage.getItem('user')
-    if (savedUser) {
-      const userData = JSON.parse(savedUser)
-      setUser(userData)
-      setIsAuthenticated(true)
+    const storedUser = localStorage.getItem('user')
+    const storedToken = localStorage.getItem('token')
+    
+    if (storedUser && storedToken) {
+      try {
+        const userData = JSON.parse(storedUser)
+        setUser(userData)
+        setIsAuthenticated(true)
+        setCurrentPage('shoes') // Direct authenticated users to shoes page
+      } catch (error) {
+        console.error('Error parsing stored user data:', error)
+        localStorage.removeItem('user')
+        localStorage.removeItem('token')
+      }
     }
   }, [])
 
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0)
-  
-  const addToCart = (product, quantity) => {
-    const existingProductIndex = cart.findIndex(item => item.id === product.id)
+
+  const addToCart = (product, quantity = 1) => {
+    const existingItem = cart.find(item => item.id === product.id)
     
-    if (existingProductIndex >= 0) {
-      const updatedCart = [...cart]
-      updatedCart[existingProductIndex].quantity += quantity
+    if (existingItem) {
+      const updatedCart = cart.map(item =>
+        item.id === product.id 
+          ? { ...item, quantity: item.quantity + quantity }
+          : item
+      )
       setCart(updatedCart)
     } else {
       setCart([...cart, { ...product, quantity }])
@@ -66,6 +80,7 @@ function App() {
     setCart([])
     setCurrentPage('landing')
     localStorage.removeItem('user')
+    localStorage.removeItem('token')
     setToast({
       message: 'Successfully logged out!',
       type: 'success'
@@ -76,37 +91,34 @@ function App() {
     setToast(null)
   }
 
-  const updateQuantity = (productId, newQuantity) => {
-    if (newQuantity < 1) {
-      removeFromCart(productId)
+  const updateQuantity = (id, newQuantity) => {
+    if (newQuantity <= 0) {
+      removeFromCart(id)
       return
     }
-    setCart(cart.map(item =>
-      item.id === productId
-        ? { ...item, quantity: newQuantity }
-        : item
-    ))
+    
+    const updatedCart = cart.map(item =>
+      item.id === id ? { ...item, quantity: newQuantity } : item
+    )
+    setCart(updatedCart)
   }
 
-  const removeFromCart = (productId) => {
-    setCart(cart.filter(item => item.id !== productId))
+  const removeFromCart = (id) => {
+    const updatedCart = cart.filter(item => item.id !== id)
+    setCart(updatedCart)
     setToast({
       message: 'Item removed from cart',
-      type: 'info'
+      type: 'success'
     })
   }
 
-  const renderPage = () => {
-    // If user tries to access cart without logging in, redirect to login
-    if (currentPage === 'cart' && !isAuthenticated) {
-      setCurrentPage('login')
-      setToast({
-        message: 'Please log in to view your cart',
-        type: 'info'
-      })
-      return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />
-    }
+  const handleOrderComplete = (order) => {
+    setOrderDetails(order)
+    // Clear cart after successful order
+    setCart([])
+  }
 
+  const renderCurrentPage = () => {
     // Handle shoe category pages that aren't implemented yet
     if (['running', 'sports', 'casual', 'limited'].includes(currentPage)) {
       // For now, redirect to the AllShoes page with a filter applied
@@ -120,28 +132,75 @@ function App() {
     switch(currentPage) {
       case 'landing':
         return <LandingPage setCurrentPage={setCurrentPage} />
+      
       case 'login':
         return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />
+      
       case 'signup':
         return <SignUpPage setCurrentPage={setCurrentPage} setToast={setToast} />
+      
       case 'home':
         // Redirect home to shoes page since we're only selling shoes
         setCurrentPage('shoes')
         return <AllShoes addToCart={addToCart} />
+      
       case 'shoes':
         return <AllShoes addToCart={addToCart} />
+      
       case 'about':
         return <AboutPage />
+      
+      case 'profile':
+        if (!isAuthenticated) {
+          setCurrentPage('login')
+          setToast({
+            message: 'Please log in to view your profile',
+            type: 'info'
+          })
+          return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />
+        }
+        return <ProfilePage user={user} />
+      
       case 'cart':
+        if (!isAuthenticated) {
+          setCurrentPage('login')
+          setToast({
+            message: 'Please log in to view your cart',
+            type: 'info'
+          })
+          return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />
+        }
         return <CartPage 
           cart={cart} 
           updateQuantity={updateQuantity} 
           removeFromCart={removeFromCart} 
           setCurrentPage={setCurrentPage} 
         />
-      case 'profile':
-        return <ProfilePage user={user} />
+      
+      case 'checkout':
+        if (!isAuthenticated) {
+          setCurrentPage('login')
+          setToast({
+            message: 'Please log in to proceed with checkout',
+            type: 'info'
+          })
+          return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />
+        }
+        return <CheckoutPage 
+          cart={cart} 
+          user={user} 
+          setCurrentPage={setCurrentPage}
+          onOrderComplete={handleOrderComplete}
+        />
+      
+      case 'order-confirmation':
+        return <OrderConfirmationPage 
+          orderDetails={orderDetails} 
+          setCurrentPage={setCurrentPage} 
+        />
+      
       default:
+        // Default case: show landing page for non-authenticated users, shoes for authenticated
         return isAuthenticated ? 
           <AllShoes addToCart={addToCart} /> : 
           <LandingPage setCurrentPage={setCurrentPage} />
@@ -159,7 +218,7 @@ function App() {
         onLogout={handleLogout}
       />
       <main className="main-content">
-        {renderPage()}
+        {renderCurrentPage()}
       </main>
       
       {toast && (

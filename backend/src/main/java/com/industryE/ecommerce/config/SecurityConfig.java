@@ -35,7 +35,7 @@ public class SecurityConfig {
     
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(12); // Using strength 12 for better security
     }
     
     @Bean
@@ -60,12 +60,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                 .requestMatchers("/api/users/profile").authenticated()
+                .requestMatchers("/api/orders/**").authenticated()
                 .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-          // H2 Console (for development)
+          
+        // H2 Console (for development)
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
         
         return http.build();

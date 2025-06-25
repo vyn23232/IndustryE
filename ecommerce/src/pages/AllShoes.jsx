@@ -248,7 +248,7 @@ const ShoesPage = ({ addToCart }) => {
                       <span className="stars">⭐⭐⭐⭐⭐</span>
                       <span className="rating-value">({shoe.rating})</span>
                     </div>
-                    <div className="product-price">${shoe.price}</div>
+                    <div className="product-price">₱{shoe.price}</div>
                     <button 
                       className="add-to-cart-btn btn-primary"
                       onClick={(e) => handleQuickAddToCart(e, shoe)}
@@ -303,7 +303,7 @@ const ShoesPage = ({ addToCart }) => {
                   <span className="stars">⭐⭐⭐⭐⭐</span>
                   <span className="rating-value">({selectedShoe.rating})</span>
                 </div>
-                <div className="modal-product-price">${selectedShoe.price}</div>
+                <div className="modal-product-price">₱{selectedShoe.price}</div>
                 <p className="modal-product-description">
                   Experience ultimate comfort and style with our premium {selectedShoe.color.toLowerCase()} 
                   {selectedShoe.name} shoes. Perfect for everyday wear, sports, and active lifestyles.

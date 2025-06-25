@@ -1,4 +1,5 @@
-# IndustryE - Full-Stack E-Commerce Platform
+# React Project Midyear
+ShoeStop - E-Commerce Website
 
 A modern e-commerce platform built with React frontend and Spring Boot backend, featuring user authentication, product catalog, and shopping cart functionality.
 

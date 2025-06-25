@@ -84,14 +84,12 @@ const LoginPage = ({ onLogin, setCurrentPage }) => {
       <div className="auth-container">
         <div className="auth-content">
           <div className="auth-header">
-            <h1>Welcome Back!</h1>
-            <p>Sign in to your MultiStore account</p>
-          </div>          <form className="auth-form" onSubmit={handleSubmit}>
-            {errors.general && (
-              <div className="error-message" style={{marginBottom: '15px', textAlign: 'center'}}>
-                {errors.general}
-              </div>
-            )}
+            <h1>Welcome Back to ShoeStop</h1>
+            <p>Sign in to your account to continue shopping</p>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="auth-form">
+            {errors.general && <div className="error-message">{errors.general}</div>}
             
             <div className="form-group">
               <label htmlFor="email">Email Address</label>
@@ -131,21 +129,14 @@ const LoginPage = ({ onLogin, setCurrentPage }) => {
           </form>
 
           <div className="auth-footer">
-            <p>
-              Don't have an account?{' '}
+            <p>Don't have an account? 
               <button 
                 className="link-btn"
                 onClick={() => setCurrentPage('signup')}
               >
-                Sign Up
+                Sign up for ShoeStop
               </button>
             </p>
-            <button 
-              className="link-btn"
-              onClick={() => setCurrentPage('landing')}
-            >
-              Back to Home
-            </button>
           </div>
         </div>
 

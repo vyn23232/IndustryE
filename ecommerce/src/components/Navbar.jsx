@@ -45,8 +45,8 @@ const Navbar = ({ currentPage, setCurrentPage, cartItemCount, isAuthenticated, u
       <div className="nav-container">
         {/* Brand Section */}
         <div className="nav-brand" onClick={handleBrandClick}>
-          <div className="brand-icon">👟</div>
-          <div className="brand-text">ShoeStore</div>
+          <div className="brand-icon">🛍️</div>
+          <div className="brand-text">ShoeStop</div>
         </div>
 
         {/* Navigation Links */}

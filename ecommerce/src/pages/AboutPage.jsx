@@ -45,10 +45,10 @@ const AboutPage = () => {
       <section className="about-hero">
         <div className="container">
           <div className="hero-content">
-            <h1>About <span className="highlight">ShoeStore</span></h1>
+            <h1>About <span className="highlight">ShoeStop</span></h1>
             <p className="hero-subtitle">
-              Your trusted footwear destination, bringing you the best shoes
-              from casual to athletic, all in one convenient place.
+              Your trusted multi-category e-commerce destination, bringing you the best products 
+              from electronics to fashion, all in one convenient place.
             </p>
           </div>
         </div>
@@ -61,9 +61,9 @@ const AboutPage = () => {
             <div className="story-text">
               <h2>Our Story</h2>
               <p>
-                Founded in 2013, ShoeStore began as a vision to create the ultimate shoe shopping
-                destination where customers could find the perfect footwear for any occasion
-                without compromising on quality, style, or comfort.
+                Founded in 2020, ShoeStop began as a vision to create the ultimate shopping 
+                destination where customers could find everything they need without the hassle 
+                of visiting multiple stores.
               </p>
               <p>
                 What started as a small boutique with a handful of premium shoe brands has grown into

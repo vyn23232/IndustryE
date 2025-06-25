@@ -94,8 +94,8 @@ const ProfilePage = ({ user, setUser, setToast }) => {
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <h1>My Profile</h1>
-        <p>Manage your account details</p>
+        <h1>My ShoeStop Profile</h1>
+        <p>Manage your account settings and preferences</p>
       </div>
       
       <div className="profile-content">
@@ -125,7 +125,7 @@ const ProfilePage = ({ user, setUser, setToast }) => {
           <div className="form-card">
             <div className="form-header">
               <h2>Personal Information</h2>
-              <p>Update your personal details</p>
+              <p>Update your account details</p>
             </div>
             
             <form onSubmit={handleSubmit} className="profile-form">
@@ -188,7 +188,7 @@ const ProfilePage = ({ user, setUser, setToast }) => {
                   name="bio"
                   value={formData.bio}
                   onChange={handleChange}
-                  rows="4"
+                  rows="3"
                   placeholder="Tell us a bit about yourself"
                 />
               </div>

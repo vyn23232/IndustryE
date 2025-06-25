@@ -112,14 +112,12 @@ const SignUpPage = ({ setCurrentPage, setToast }) => {
       <div className="auth-container">
         <div className="auth-content">
           <div className="auth-header">
-            <h1>Join MultiStore!</h1>
-            <p>Create your account and start shopping</p>
-          </div>          <form className="auth-form" onSubmit={handleSubmit}>
-            {errors.general && (
-              <div className="error-message" style={{marginBottom: '15px', textAlign: 'center'}}>
-                {errors.general}
-              </div>
-            )}
+            <h1>Join ShoeStop Today</h1>
+            <p>Create your account and start your shopping journey</p>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="auth-form">
+            {errors.general && <div className="error-message">{errors.general}</div>}
             
             <div className="form-group">
               <label htmlFor="name">Full Name</label>
@@ -187,21 +185,14 @@ const SignUpPage = ({ setCurrentPage, setToast }) => {
           </form>
 
           <div className="auth-footer">
-            <p>
-              Already have an account?{' '}
+            <p>Already have an account? 
               <button 
                 className="link-btn"
                 onClick={() => setCurrentPage('login')}
               >
-                Sign In
+                Sign in to ShoeStop
               </button>
             </p>
-            <button 
-              className="link-btn"
-              onClick={() => setCurrentPage('landing')}
-            >
-              Back to Home
-            </button>
           </div>
         </div>
 

@@ -58,12 +58,12 @@ const LandingPage = ({ setCurrentPage }) => {
               <h1 className="hero-title">
                 Welcome to
                 <br />
-                <span className="highlight">ShoeStore</span>
+                <span className="highlight">ShoeStop</span>
               </h1>
               <p className="hero-description">
-                Your ultimate footwear destination with endless styles and brands. 
-                Discover amazing shoes for every occasion with unbeatable prices 
-                and exceptional comfort.
+                Your ultimate shopping destination with endless possibilities. 
+                Discover amazing products across all categories with unbeatable prices 
+                and exceptional service.
               </p>
               <div className="hero-actions">
                 <button 
@@ -119,8 +119,8 @@ const LandingPage = ({ setCurrentPage }) => {
       <section className="features-section">
         <div className="container">
           <div className="section-header">
-            <h2>Why Choose <span className="highlight">ShoeStore</span>?</h2>
-            <p>Experience the difference with our premium footwear selection</p>
+            <h2>Why Choose <span className="highlight">ShoeStop</span>?</h2>
+            <p>Experience the difference with our premium shopping platform</p>
           </div>
           <div className="features-grid">
             {features.map((feature, index) => (
@@ -162,8 +162,8 @@ const LandingPage = ({ setCurrentPage }) => {
       <section className="cta-section">
         <div className="container">
           <div className="cta-content">
-            <h2>Ready to Step Up Your Shoe Game?</h2>
-            <p>Join ShoeStore today and discover amazing deals on your favorite footwear</p>
+            <h2>Ready to Start Shopping?</h2>
+            <p>Join ShoeStop today and discover amazing deals on your favorite products</p>
             <div className="cta-actions">
               <button 
                 className="btn-primary cta-btn"
@@ -173,9 +173,9 @@ const LandingPage = ({ setCurrentPage }) => {
               </button>
               <button 
                 className="btn-secondary explore-btn"
-                onClick={() => setCurrentPage('shoes')}
+                onClick={() => setCurrentPage('about')}
               >
-                Browse Now
+                Learn More
               </button>
             </div>
           </div>

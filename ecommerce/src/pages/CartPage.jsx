@@ -1,9 +1,13 @@
 import React from "react"
 import '../css/CartPage.css'
 
-const CartPage = ({ cart, updateQuantity, removeFromCart }) => {
+const CartPage = ({ cart, updateQuantity, removeFromCart, setCurrentPage }) => {
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0)
+  }
+
+  const handleContinueShopping = () => {
+    setCurrentPage('shoes');
   }
 
   if (!cart || cart.length === 0) {
@@ -11,7 +15,7 @@ const CartPage = ({ cart, updateQuantity, removeFromCart }) => {
       <div className="cart-empty">
         <h2>Your Cart is Empty</h2>
         <p>Start shopping to add items to your cart!</p>
-        <button className="btn-primary">Continue Shopping</button>
+        <button className="btn-primary" onClick={handleContinueShopping}>Continue Shopping</button>
       </div>
     )
   }
@@ -31,7 +35,7 @@ const CartPage = ({ cart, updateQuantity, removeFromCart }) => {
               <div className="item-details">
                 <h3>{item.name}</h3>
                 <p className="item-color">{item.color}</p>
-                <p className="item-price">₱  {item.price}</p>
+                <p className="item-price">₱ {item.price}</p>
               </div>
 
               <div className="item-quantity">
@@ -51,7 +55,7 @@ const CartPage = ({ cart, updateQuantity, removeFromCart }) => {
               </div>
 
               <div className="item-total">
-                ₱  {(item.price * item.quantity).toFixed(2)}
+                ₱ {(item.price * item.quantity).toFixed(2)}
               </div>
 
               <button 
@@ -62,6 +66,12 @@ const CartPage = ({ cart, updateQuantity, removeFromCart }) => {
               </button>
             </div>
           ))}
+        </div>
+
+        <div className="cart-actions">
+          <button className="continue-shopping-btn" onClick={handleContinueShopping}>
+            Continue Shopping
+          </button>
         </div>
 
         <div className="cart-summary">

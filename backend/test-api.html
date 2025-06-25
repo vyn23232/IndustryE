@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .result { margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 4px; }
+        .success { border-left: 4px solid #28a745; }
+        .error { border-left: 4px solid #dc3545; }
+        input { padding: 8px; margin: 5px; border: 1px solid #ddd; border-radius: 4px; width: 200px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Backend API Test</h1>
+        <p>Test the Spring Boot backend API endpoints</p>
+        
+        <div class="test-section">
+            <h3>1. Server Health Check</h3>
+            <button onclick="testConnection()">Test Connection</button>
+            <div id="connection-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. User Registration</h3>
+            <input type="text" id="reg-name" placeholder="Name" value="Test User">
+            <input type="email" id="reg-email" placeholder="Email" value="test@test.com">
+            <input type="password" id="reg-password" placeholder="Password" value="password123">
+            <br>
+            <button onclick="testRegister()">Register User</button>
+            <div id="register-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. User Login</h3>
+            <input type="email" id="login-email" placeholder="Email" value="test@example.com">
+            <input type="password" id="login-password" placeholder="Password" value="password123">
+            <br>
+            <button onclick="testLogin()">Login User</button>
+            <div id="login-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. H2 Database Console</h3>
+            <p>Access the H2 console to view the database:</p>
+            <button onclick="window.open('http://localhost:8080/h2-console', '_blank')">Open H2 Console</button>
+            <p><small>JDBC URL: jdbc:h2:mem:testdb, Username: sa, Password: (empty)</small></p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080';
+        
+        async function testConnection() {
+            const resultDiv = document.getElementById('connection-result');
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: '', password: '' })
+                });
+                
+                if (response.status === 400 || response.status === 401) {
+                    resultDiv.innerHTML = '<div class="success">✓ Backend server is running!</div>';
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = '<div class="error">Server responded but with unexpected status</div>';
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">✗ Connection failed: ${error.message}</div>`;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        async function testRegister() {
+            const resultDiv = document.getElementById('register-result');
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="success">✓ Registration successful!<br>User: ${data.user.name}<br>Token: ${data.token.substring(0, 20)}...</div>`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = `<div class="error">✗ Registration failed: ${data.message}</div>`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">✗ Request failed: ${error.message}</div>`;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        async function testLogin() {
+            const resultDiv = document.getElementById('login-result');
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="success">✓ Login successful!<br>User: ${data.user.name}<br>Email: ${data.user.email}<br>Token: ${data.token.substring(0, 20)}...</div>`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = `<div class="error">✗ Login failed: ${data.message}</div>`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">✗ Request failed: ${error.message}</div>`;
+                resultDiv.className = 'result error';
+            }
+        }
+    </script>
+</body>
+</html>

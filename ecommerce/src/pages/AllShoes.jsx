@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import '../css/ShoesPage.css'
+import '../css/AllShoes.css'
 
 const ShoesPage = ({ addToCart }) => {
   const shoes = [

@@ -1,6 +1,12 @@
+import { useEffect } from 'react'
 import '../css/HomePage.css'
 
-const HomePage = ({ currentPage, setCurrentPage }) => {
+const HomePage = ({ setCurrentPage }) => {
+  // Since we're only selling shoes, redirect to shoes page
+  useEffect(() => {
+    setCurrentPage('shoes')
+  }, [setCurrentPage])
+  
   const categories = [
     { id: 'shoes', name: 'Shoes', icon: '👟', color: '#ff6b35' },
     { id: 'pc-parts', name: 'PC Parts', icon: '🖥️', color: '#4dabf7' },

@@ -48,15 +48,11 @@ const LoginPage = ({ onLogin, setCurrentPage }) => {
     
     if (!validateForm()) {
       return
-    }
-
-    setIsLoading(true)
+    }    setIsLoading(true)
     
-    // NEW CODE: Backend-ready authentication - replace this simulation with actual API call
-    // TODO: Replace with actual backend authentication
-    /*
+    // Connect to Spring Boot backend
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('http://localhost:8080/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,26 +66,17 @@ const LoginPage = ({ onLogin, setCurrentPage }) => {
       const data = await response.json()
       
       if (response.ok) {
+        // Store JWT token
+        localStorage.setItem('token', data.token)
         onLogin(data.user)
       } else {
-        setErrors({ general: data.message })
+        setErrors({ general: data.message || 'Login failed. Please try again.' })
       }
     } catch (error) {
-      setErrors({ general: 'Login failed. Please try again.' })
-    }
-    */
-    
-    // Simulate API call (remove this when implementing real backend)
-    setTimeout(() => {
-      const userData = {
-        name: formData.email.split('@')[0],
-        email: formData.email,
-        id: Date.now()
-      }
-      onLogin(userData)
+      setErrors({ general: 'Connection error. Please make sure the server is running.' })
+    } finally {
       setIsLoading(false)
-    }, 1500)
-    // END NEW CODE: Backend-ready authentication
+    }
   }
 
   return (
@@ -99,9 +86,13 @@ const LoginPage = ({ onLogin, setCurrentPage }) => {
           <div className="auth-header">
             <h1>Welcome Back!</h1>
             <p>Sign in to your MultiStore account</p>
-          </div>
-
-          <form className="auth-form" onSubmit={handleSubmit}>
+          </div>          <form className="auth-form" onSubmit={handleSubmit}>
+            {errors.general && (
+              <div className="error-message" style={{marginBottom: '15px', textAlign: 'center'}}>
+                {errors.general}
+              </div>
+            )}
+            
             <div className="form-group">
               <label htmlFor="email">Email Address</label>
               <input

@@ -1,13 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './css/App.css'
 import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage'
-import ShoesPage from './pages/ShoesPage'
+import AllShoes from './pages/AllShoes'
 import Toast from './components/Toast'
 import AboutPage from './pages/AboutPage'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
+import CartPage from './pages/CartPage'
+import ProfilePage from './pages/ProfilePage'
+
 
 function App() {
   const [currentPage, setCurrentPage] = useState('landing')
@@ -15,6 +18,16 @@ function App() {
   const [toast, setToast] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState(null)
+
+  // Load saved user data from localStorage on app startup
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user')
+    if (savedUser) {
+      const userData = JSON.parse(savedUser)
+      setUser(userData)
+      setIsAuthenticated(true)
+    }
+  }, [])
 
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0)
   
@@ -39,19 +52,10 @@ function App() {
   const handleLogin = (userData) => {
     setIsAuthenticated(true)
     setUser(userData)
-    setCurrentPage('home')
+    setCurrentPage('shoes')  // Direct to shoes page instead of home
+    localStorage.setItem('user', JSON.stringify(userData))
     setToast({
       message: `Welcome back, ${userData.name}!`,
-      type: 'success'
-    })
-  }
-
-  const handleSignUp = (userData) => {
-    setIsAuthenticated(true)
-    setUser(userData)
-    setCurrentPage('home')
-    setToast({
-      message: `Welcome to MultiStore, ${userData.name}!`,
       type: 'success'
     })
   }
@@ -61,6 +65,7 @@ function App() {
     setUser(null)
     setCart([])
     setCurrentPage('landing')
+    localStorage.removeItem('user')
     setToast({
       message: 'Successfully logged out!',
       type: 'success'
@@ -85,25 +90,60 @@ function App() {
 
   const removeFromCart = (productId) => {
     setCart(cart.filter(item => item.id !== productId))
+    setToast({
+      message: 'Item removed from cart',
+      type: 'info'
+    })
   }
 
   const renderPage = () => {
+    // If user tries to access cart without logging in, redirect to login
+    if (currentPage === 'cart' && !isAuthenticated) {
+      setCurrentPage('login')
+      setToast({
+        message: 'Please log in to view your cart',
+        type: 'info'
+      })
+      return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />
+    }
+
+    // Handle shoe category pages that aren't implemented yet
+    if (['running', 'sports', 'casual', 'limited'].includes(currentPage)) {
+      // For now, redirect to the AllShoes page with a filter applied
+      setToast({
+        message: `${currentPage.charAt(0).toUpperCase() + currentPage.slice(1)} shoes coming soon! Showing all shoes instead.`,
+        type: 'info'
+      })
+      return <AllShoes addToCart={addToCart} categoryFilter={currentPage} />
+    }
+
     switch(currentPage) {
       case 'landing':
         return <LandingPage setCurrentPage={setCurrentPage} />
       case 'login':
         return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />
       case 'signup':
-        return <SignUpPage onSignUp={handleSignUp} setCurrentPage={setCurrentPage} />
+        return <SignUpPage setCurrentPage={setCurrentPage} setToast={setToast} />
       case 'home':
-        return <HomePage currentPage={currentPage} setCurrentPage={setCurrentPage} />
+        // Redirect home to shoes page since we're only selling shoes
+        setCurrentPage('shoes')
+        return <AllShoes addToCart={addToCart} />
       case 'shoes':
-        return <ShoesPage addToCart={addToCart} />
+        return <AllShoes addToCart={addToCart} />
       case 'about':
         return <AboutPage />
+      case 'cart':
+        return <CartPage 
+          cart={cart} 
+          updateQuantity={updateQuantity} 
+          removeFromCart={removeFromCart} 
+          setCurrentPage={setCurrentPage} 
+        />
+      case 'profile':
+        return <ProfilePage user={user} />
       default:
         return isAuthenticated ? 
-          <HomePage currentPage={currentPage} setCurrentPage={setCurrentPage} /> : 
+          <AllShoes addToCart={addToCart} /> : 
           <LandingPage setCurrentPage={setCurrentPage} />
     }
   }

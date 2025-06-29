@@ -36,12 +36,19 @@ public class Product {
     @Column(nullable = false)
     private Double price;
     
-    @Column(nullable = false)
-    private String imageUrl;
+    // Main image path/identifier (for frontend reference)
+    @Column(name = "image")
+    private String image;
     
-    // Additional images for detailed view (stored as JSON string)
-    @Column(name = "additional_images", columnDefinition = "TEXT")
-    private String additionalImages;
+    // Additional properties to match frontend structure
+    @Column(name = "color")
+    private String color;
+    
+    @Column(name = "brand")
+    private String brand;
+    
+    @Column(name = "rating")
+    private Double rating = 4.5;
     
     // Available sizes for shoes (stored as JSON string)
     @Column(name = "available_sizes", columnDefinition = "TEXT")
@@ -66,24 +73,37 @@ public class Product {
         this.updatedAt = LocalDateTime.now();
     }
     
-    public Product(String name, String description, Double price, String imageUrl, String category) {
+    public Product(String name, String description, Double price, String category) {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.imageUrl = imageUrl;
         this.category = category;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
     
-    public Product(String name, String description, Double price, String imageUrl, String additionalImages, String availableSizes, String category) {
+    public Product(String name, String description, Double price, String availableSizes, String category) {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.imageUrl = imageUrl;
-        this.additionalImages = additionalImages;
         this.availableSizes = availableSizes;
         this.category = category;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+    
+    // New constructor with all fields
+    public Product(String name, String description, Double price, String availableSizes, String category, 
+                  String image, String color, String brand, Double rating) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.availableSizes = availableSizes;
+        this.category = category;
+        this.image = image;
+        this.color = color;
+        this.brand = brand;
+        this.rating = rating;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -121,22 +141,6 @@ public class Product {
         this.price = price;
     }
     
-    public String getImageUrl() {
-        return imageUrl;
-    }
-    
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-    
-    public String getAdditionalImages() {
-        return additionalImages;
-    }
-    
-    public void setAdditionalImages(String additionalImages) {
-        this.additionalImages = additionalImages;
-    }
-    
     public String getAvailableSizes() {
         return availableSizes;
     }
@@ -159,6 +163,38 @@ public class Product {
     
     public void setInStock(Boolean inStock) {
         this.inStock = inStock;
+    }
+    
+    public String getImage() {
+        return image;
+    }
+    
+    public void setImage(String image) {
+        this.image = image;
+    }
+    
+    public String getColor() {
+        return color;
+    }
+    
+    public void setColor(String color) {
+        this.color = color;
+    }
+    
+    public String getBrand() {
+        return brand;
+    }
+    
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+    
+    public Double getRating() {
+        return rating;
+    }
+    
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
     
     public LocalDateTime getCreatedAt() {

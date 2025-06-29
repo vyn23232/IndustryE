@@ -2,6 +2,7 @@ package com.industryE.ecommerce.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class OrderResponse {
     private Long id;
@@ -12,6 +13,7 @@ public class OrderResponse {
     private String paymentMethod;
     private String paymentStatus;
     private ShippingInfo shippingInfo;
+    private List<OrderItemResponse> orderItems;
     
     // Constructors
     public OrderResponse() {}
@@ -40,6 +42,9 @@ public class OrderResponse {
     
     public ShippingInfo getShippingInfo() { return shippingInfo; }
     public void setShippingInfo(ShippingInfo shippingInfo) { this.shippingInfo = shippingInfo; }
+    
+    public List<OrderItemResponse> getOrderItems() { return orderItems; }
+    public void setOrderItems(List<OrderItemResponse> orderItems) { this.orderItems = orderItems; }
     
     public static class ShippingInfo {
         private String firstName;
@@ -71,5 +76,36 @@ public class OrderResponse {
         
         public String getPhone() { return phone; }
         public void setPhone(String phone) { this.phone = phone; }
+    }
+    
+    public static class OrderItemResponse {
+        private String productName;
+        private String productImage;
+        private String size;
+        private BigDecimal unitPrice;
+        private Integer quantity;
+        private BigDecimal totalPrice;
+        
+        // Constructors
+        public OrderItemResponse() {}
+        
+        // Getters and setters
+        public String getProductName() { return productName; }
+        public void setProductName(String productName) { this.productName = productName; }
+        
+        public String getProductImage() { return productImage; }
+        public void setProductImage(String productImage) { this.productImage = productImage; }
+        
+        public String getSize() { return size; }
+        public void setSize(String size) { this.size = size; }
+        
+        public BigDecimal getUnitPrice() { return unitPrice; }
+        public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }
+        
+        public Integer getQuantity() { return quantity; }
+        public void setQuantity(Integer quantity) { this.quantity = quantity; }
+        
+        public BigDecimal getTotalPrice() { return totalPrice; }
+        public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
     }
 }

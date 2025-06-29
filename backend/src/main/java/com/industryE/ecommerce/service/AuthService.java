@@ -5,7 +5,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.industryE.ecommerce.dto.AuthResponse;
@@ -26,9 +25,6 @@ public class AuthService {
     private UserRepository userRepository;
     
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    
-    @Autowired
     private JwtTokenProvider tokenProvider;
     
     public AuthResponse login(LoginRequest loginRequest) {
@@ -45,11 +41,16 @@ public class AuthService {
             }
             
             System.out.println("User found: " + existingUser.getName());
-            System.out.println("Stored password hash: " + existingUser.getPassword().substring(0, 10) + "...");
+            System.out.println("Stored password: " + existingUser.getPassword());
             
-            // Test password matching manually
-            boolean passwordMatches = passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPassword());
+            // Direct password comparison (no hashing)
+            boolean passwordMatches = loginRequest.getPassword().equals(existingUser.getPassword());
             System.out.println("Password matches: " + passwordMatches);
+            
+            if (!passwordMatches) {
+                System.err.println("Password does not match for user: " + loginRequest.getEmail());
+                throw new RuntimeException("Invalid email or password");
+            }
             
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -92,13 +93,14 @@ public class AuthService {
             throw new RuntimeException("Email is already taken!");
         }
         
-        String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
-        System.out.println("Encoded password: " + encodedPassword.substring(0, 10) + "...");
+        // Store password as plain text (no encoding)
+        String plainPassword = registerRequest.getPassword();
+        System.out.println("Storing password as plain text: " + plainPassword);
         
         User user = new User(
                 registerRequest.getName(),
                 registerRequest.getEmail(),
-                encodedPassword
+                plainPassword
         );
         
         User savedUser = userRepository.save(user);

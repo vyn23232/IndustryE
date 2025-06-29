@@ -39,6 +39,7 @@ public class CartResponse {
         private Long productId;
         private String productName;
         private String productImage;
+        private String size;
         private BigDecimal unitPrice;
         private Integer quantity;
         private BigDecimal totalPrice;
@@ -58,6 +59,9 @@ public class CartResponse {
         
         public String getProductImage() { return productImage; }
         public void setProductImage(String productImage) { this.productImage = productImage; }
+        
+        public String getSize() { return size; }
+        public void setSize(String size) { this.size = size; }
         
         public BigDecimal getUnitPrice() { return unitPrice; }
         public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }

@@ -1,9 +1,11 @@
-import React from "react"
+import React, { useState } from "react"
 import { useNavigate } from 'react-router-dom'
 import '../css/CartPage.css'
 
 const CartPage = ({ cart, updateQuantity, removeFromCart, isAuthenticated, user }) => {
   const navigate = useNavigate()
+  const [loadingItems, setLoadingItems] = useState(new Set())
+  
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0)
   }
@@ -22,6 +24,42 @@ const CartPage = ({ cart, updateQuantity, removeFromCart, isAuthenticated, user 
 
   const handleLogin = () => {
     navigate('/login')
+  }
+
+  const handleUpdateQuantity = async (id, newQuantity, size) => {
+    const itemKey = `${id}-${size || 'no-size'}`
+    setLoadingItems(prev => new Set([...prev, itemKey]))
+    
+    try {
+      console.log('Updating quantity:', { id, newQuantity, size })
+      await updateQuantity(id, newQuantity, size)
+    } catch (error) {
+      console.error('Error updating quantity:', error)
+    } finally {
+      setLoadingItems(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(itemKey)
+        return newSet
+      })
+    }
+  }
+
+  const handleRemoveFromCart = async (id, size) => {
+    const itemKey = `${id}-${size || 'no-size'}`
+    setLoadingItems(prev => new Set([...prev, itemKey]))
+    
+    try {
+      console.log('Removing from cart:', { id, size })
+      await removeFromCart(id, size)
+    } catch (error) {
+      console.error('Error removing from cart:', error)
+    } finally {
+      setLoadingItems(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(itemKey)
+        return newSet
+      })
+    }
   }
 
   if (!isAuthenticated) {
@@ -47,10 +85,16 @@ const CartPage = ({ cart, updateQuantity, removeFromCart, isAuthenticated, user 
 
   if (!cart || cart.length === 0) {
     return (
-      <div className="cart-empty">
-        <h2>Your Cart is Empty</h2>
-        <p>Start shopping to add items to your cart!</p>
-        <button className="btn-primary" onClick={handleContinueShopping}>Continue Shopping</button>
+      <div className="cart-page">
+        <div className="cart-container">
+          <div className="cart-empty">
+            <h2>Your Cart is Empty</h2>
+            <p>Start shopping to add items to your cart!</p>
+            <button className="btn-primary" onClick={handleContinueShopping}>
+              Continue Shopping
+            </button>
+          </div>
+        </div>
       </div>
     )
   }
@@ -58,49 +102,62 @@ const CartPage = ({ cart, updateQuantity, removeFromCart, isAuthenticated, user 
   return (
     <div className="cart-page">
       <div className="cart-container">
-        <h2>Shopping Cart ({cart.length} items)</h2>
+        <div className="cart-header">
+          <h2>Shopping Cart</h2>
+          <p className="cart-count">{cart.length} {cart.length === 1 ? 'item' : 'items'} in your cart</p>
+        </div>
         
         <div className="cart-items">
-          {cart.map((item) => (
-            <div key={item.id} className="cart-item">
-              <div className="item-image">
-                <img src={item.image} alt={item.name} />
-              </div>
-              
-              <div className="item-details">
-                <h3>{item.name}</h3>
-                <p className="item-color">{item.color}</p>
-                <p className="item-price">₱ {item.price}</p>
-              </div>
+          {cart.map((item) => {
+            const itemKey = `${item.id}-${item.size || 'no-size'}`
+            const isLoading = loadingItems.has(itemKey)
+            
+            return (
+              <div key={itemKey} className={`cart-item ${isLoading ? 'loading' : ''}`}>
+                <div className="item-image">
+                  <img src={item.image} alt={item.name} />
+                </div>
+                
+                <div className="item-details">
+                  <h3>{item.name}</h3>
+                  <p className="item-color">{item.color}</p>
+                  {item.size && <p className="item-size">Size: {item.size}</p>}
+                  <p className="item-price">₱ {item.price}</p>
+                </div>
 
-              <div className="item-quantity">
+                <div className="item-quantity">
+                  <button 
+                    onClick={() => handleUpdateQuantity(item.id, item.quantity - 1, item.size)}
+                    className="quantity-btn"
+                    disabled={item.quantity <= 1 || isLoading}
+                  >
+                    -
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button 
+                    onClick={() => handleUpdateQuantity(item.id, item.quantity + 1, item.size)}
+                    className="quantity-btn"
+                    disabled={isLoading}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <div className="item-total">
+                  ₱ {(item.price * item.quantity).toFixed(2)}
+                </div>
+
                 <button 
-                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                  className="quantity-btn"
+                  className="remove-btn" 
+                  onClick={() => handleRemoveFromCart(item.id, item.size)}
+                  title="Remove item from cart"
+                  disabled={isLoading}
                 >
-                  -
-                </button>
-                <span>{item.quantity}</span>
-                <button 
-                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                  className="quantity-btn"
-                >
-                  +
+                  {isLoading ? '⟳' : '×'}
                 </button>
               </div>
-
-              <div className="item-total">
-                ₱ {(item.price * item.quantity).toFixed(2)}
-              </div>
-
-              <button 
-                className="remove-btn" 
-                onClick={() => removeFromCart(item.id)}
-              >
-                ×
-              </button>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         <div className="cart-actions">

@@ -58,17 +58,25 @@ public class CreateOrderRequest {
     }
     
     public static class OrderItemRequest {
+        private Long productId;
         private String name;
         private String image;
+        private String size;
         private double price;
         private int quantity;
         
         // Getters and setters
+        public Long getProductId() { return productId; }
+        public void setProductId(Long productId) { this.productId = productId; }
+        
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
         
         public String getImage() { return image; }
         public void setImage(String image) { this.image = image; }
+        
+        public String getSize() { return size; }
+        public void setSize(String size) { this.size = size; }
         
         public double getPrice() { return price; }
         public void setPrice(double price) { this.price = price; }

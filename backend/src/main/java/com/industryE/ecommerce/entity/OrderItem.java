@@ -29,6 +29,9 @@ public class OrderItem {
     @Column(name = "product_image", columnDefinition = "TEXT")
     private String productImage;
     
+    @Column(name = "size")
+    private String size;
+    
     @Column(name = "unit_price", precision = 10, scale = 2, nullable = false)
     private BigDecimal unitPrice;
     
@@ -53,6 +56,9 @@ public class OrderItem {
     
     public String getProductImage() { return productImage; }
     public void setProductImage(String productImage) { this.productImage = productImage; }
+    
+    public String getSize() { return size; }
+    public void setSize(String size) { this.size = size; }
     
     public BigDecimal getUnitPrice() { return unitPrice; }
     public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }

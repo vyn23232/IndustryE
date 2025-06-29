@@ -16,9 +16,31 @@ import OrderConfirmationPage from './pages/OrderConfirmationPage'
 import OrderHistoryPage from './pages/OrderHistoryPage'
 import SearchPage from './pages/SearchPage'
 import DetailsShoesPage from './pages/DetailsShoesPage'
+import { localShoesData } from './data/shoesData'
 
 // API base URL
 const API_BASE_URL = 'http://localhost:8080/api'
+
+// Helper function to get local image for a product
+const getLocalImageForProduct = (productId, productName) => {
+  const localProduct = localShoesData.find(product => product.id === productId)
+  if (localProduct) {
+    return localProduct.image
+  }
+  
+  // Fallback: try to find by name match
+  const nameMatch = localShoesData.find(product => 
+    product.name.toLowerCase().includes(productName.toLowerCase()) ||
+    productName.toLowerCase().includes(product.name.toLowerCase())
+  )
+  
+  if (nameMatch) {
+    return nameMatch.image
+  }
+  
+  // Default fallback image or empty string
+  return ''
+}
 
 // Axios interceptor to add auth token
 axios.interceptors.request.use((config) => {
@@ -48,6 +70,9 @@ function AppContent() {
     
     if (storedUser && storedToken) {
       try {
+        // Set up axios default headers for authentication
+        axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`
+        
         // Validate token by making a test request
         axios.get(`${API_BASE_URL}/cart`)
           .then(() => {
@@ -59,23 +84,50 @@ function AppContent() {
           })
           .catch(error => {
             console.error('Token validation failed:', error)
-            // Clear invalid credentials
+            // Clear invalid credentials but preserve cart for guest mode
             localStorage.removeItem('user')
             localStorage.removeItem('token')
-            localStorage.removeItem('cart')
-            setCart([])
+            delete axios.defaults.headers.common['Authorization']
+            // Load any guest cart from localStorage
+            const guestCart = localStorage.getItem('cart')
+            if (guestCart) {
+              try {
+                setCart(JSON.parse(guestCart))
+              } catch (e) {
+                console.error('Error parsing guest cart:', e)
+                setCart([])
+              }
+            }
           })
       } catch (error) {
         console.error('Error parsing stored user data:', error)
         localStorage.removeItem('user')
         localStorage.removeItem('token')
-        localStorage.removeItem('cart')
-        setCart([])
+        delete axios.defaults.headers.common['Authorization']
+        // Load any guest cart from localStorage
+        const guestCart = localStorage.getItem('cart')
+        if (guestCart) {
+          try {
+            setCart(JSON.parse(guestCart))
+          } catch (e) {
+            console.error('Error parsing guest cart:', e)
+            setCart([])
+          }
+        }
       }
     } else {
-      // Clear any existing cart data for non-authenticated users
-      setCart([])
-      localStorage.removeItem('cart')
+      // For non-authenticated users, load cart from localStorage if exists
+      const guestCart = localStorage.getItem('cart')
+      if (guestCart) {
+        try {
+          setCart(JSON.parse(guestCart))
+        } catch (e) {
+          console.error('Error parsing guest cart:', e)
+          setCart([])
+          localStorage.removeItem('cart')
+        }
+      }
+      delete axios.defaults.headers.common['Authorization']
     }
   }, [])
 
@@ -91,7 +143,8 @@ function AppContent() {
           name: item.productName,
           price: item.unitPrice,
           quantity: item.quantity,
-          image: item.productImage || 'https://via.placeholder.com/200',
+          size: item.size, // Include size information
+          image: getLocalImageForProduct(item.productId, item.productName), // Use local images
           color: 'Default', // You might want to add color to backend
           cartItemId: item.id // Keep the cart item ID for backend operations
         }))
@@ -106,50 +159,64 @@ function AppContent() {
   }
 
   const addToCart = async (product, quantity = 1) => {
-    // If not authenticated, prevent adding to cart and show login prompt
-    if (!isAuthenticated) {
+    // Check if product has selectedSize (from DetailsShoesPage)
+    const productSize = product.selectedSize
+    if (!productSize) {
       setToast({
-        message: 'Please log in to add items to your cart',
+        message: 'Please select a size before adding to cart',
         type: 'error'
       })
-      navigate('/login')
       return
     }
 
-    const existingItem = cart.find(item => item.id === product.id)
+    const existingItem = cart.find(item => item.id === product.id && item.size === productSize)
     let updatedCart
 
     if (existingItem) {
       updatedCart = cart.map(item =>
-        item.id === product.id 
+        item.id === product.id && item.size === productSize
           ? { ...item, quantity: item.quantity + quantity }
           : item
       )
     } else {
-      updatedCart = [...cart, { ...product, quantity }]
+      updatedCart = [...cart, { ...product, quantity, size: productSize }]
     }
     
     setCart(updatedCart)
     
-    // Sync with backend for authenticated users
-    try {
-      await axios.post(`${API_BASE_URL}/cart/add`, {
-        productId: product.id,
-        quantity: quantity
-      })
-      
-      // Show success toast
+    // For authenticated users, sync with backend
+    if (isAuthenticated) {
+      try {
+        await axios.post(`${API_BASE_URL}/cart/add`, {
+          productId: product.id,
+          quantity: quantity,
+          size: productSize
+        })
+        
+        // Show success toast
+        setToast({
+          message: `${quantity} ${product.name} (Size ${productSize}) added to cart!`,
+          type: 'success'
+        })
+      } catch (error) {
+        console.error('Error syncing cart with backend:', error)
+        // Revert cart state if backend sync fails
+        setCart(cart)
+        
+        // Extract error message from backend response
+        const errorMessage = error.response?.data?.message || 'Failed to add item to cart. Please try again.'
+        setToast({
+          message: errorMessage,
+          type: 'error'
+        })
+        return
+      }
+    } else {
+      // For guest users, save to localStorage
+      localStorage.setItem('cart', JSON.stringify(updatedCart))
       setToast({
-        message: `${quantity} ${product.name} added to cart!`,
+        message: `${quantity} ${product.name} (Size ${productSize}) added to cart! Please log in to save your cart.`,
         type: 'success'
-      })
-    } catch (error) {
-      console.error('Error syncing cart with backend:', error)
-      // Revert cart state if backend sync fails
-      setCart(cart)
-      setToast({
-        message: 'Failed to add item to cart. Please try again.',
-        type: 'error'
       })
     }
   }
@@ -159,13 +226,53 @@ function AppContent() {
     setUser(userData)
     localStorage.setItem('user', JSON.stringify(userData))
     
-    // Load user's cart from backend
-    await loadCartFromBackend()
+    // Set up axios default headers for authentication
+    const token = localStorage.getItem('token')
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    }
     
-    setToast({
-      message: `Welcome back, ${userData.name}!`,
-      type: 'success'
-    })
+    // Save current guest cart before loading backend cart
+    const guestCart = [...cart]
+    
+    // Load user's cart from backend
+    const backendCart = await loadCartFromBackend()
+    
+    // Merge guest cart with backend cart if guest had items
+    if (guestCart.length > 0) {
+      try {
+        // Add each guest cart item to backend
+        for (const item of guestCart) {
+          await axios.post(`${API_BASE_URL}/cart/add`, {
+            productId: item.id,
+            quantity: item.quantity,
+            size: item.size
+          })
+        }
+        
+        // Reload cart from backend after merging
+        await loadCartFromBackend()
+        
+        // Clear guest cart from localStorage
+        localStorage.removeItem('cart')
+        
+        setToast({
+          message: `Welcome back, ${userData.name}! Your cart items have been merged.`,
+          type: 'success'
+        })
+      } catch (error) {
+        console.error('Error merging guest cart:', error)
+        setToast({
+          message: `Welcome back, ${userData.name}! There was an issue merging your cart items.`,
+          type: 'warning'
+        })
+      }
+    } else {
+      setToast({
+        message: `Welcome back, ${userData.name}!`,
+        type: 'success'
+      })
+    }
     
     navigate('/shoes')
   }
@@ -173,13 +280,13 @@ function AppContent() {
   const handleLogout = () => {
     setIsAuthenticated(false)
     setUser(null)
-    setCart([]) // Clear cart on logout
+    // Don't clear cart on logout - it should persist in backend
     localStorage.removeItem('user')
     localStorage.removeItem('token')
-    localStorage.removeItem('cart')
+    delete axios.defaults.headers.common['Authorization']
     navigate('/')
     setToast({
-      message: 'Successfully logged out!',
+      message: 'Successfully logged out! Your cart items have been saved.',
       type: 'success'
     })
   }
@@ -187,76 +294,74 @@ function AppContent() {
   const closeToast = () => {
     setToast(null)
   }
-  const updateQuantity = async (id, newQuantity) => {
-    if (!isAuthenticated) {
-      setToast({
-        message: 'Please log in to modify your cart',
-        type: 'error'
-      })
-      return
-    }
-
+  const updateQuantity = async (id, newQuantity, size) => {
     if (newQuantity <= 0) {
-      removeFromCart(id)
+      removeFromCart(id, size)
       return
     }
 
     const updatedCart = cart.map(item =>
-      item.id === id ? { ...item, quantity: newQuantity } : item
+      (item.id === id && item.size === size) ? { ...item, quantity: newQuantity } : item
     )
     setCart(updatedCart)
     
-    // Sync with backend
-    try {
-      const cartItem = cart.find(item => item.id === id)
-      if (cartItem) {
-        const itemId = cartItem.cartItemId || cartItem.id
-        await axios.put(`${API_BASE_URL}/cart/items/${itemId}`, {
-          quantity: newQuantity
+    if (isAuthenticated) {
+      // Sync with backend for authenticated users
+      try {
+        const cartItem = cart.find(item => item.id === id && item.size === size)
+        if (cartItem) {
+          const itemId = cartItem.cartItemId || cartItem.id
+          await axios.put(`${API_BASE_URL}/cart/items/${itemId}`, {
+            quantity: newQuantity
+          })
+        }
+      } catch (error) {
+        console.error('Error updating cart item:', error)
+        // Revert cart state if backend sync fails
+        setCart(cart)
+        setToast({
+          message: 'Failed to update cart. Please try again.',
+          type: 'error'
         })
       }
-    } catch (error) {
-      console.error('Error updating cart item:', error)
-      // Revert cart state if backend sync fails
-      setCart(cart)
-      setToast({
-        message: 'Failed to update cart. Please try again.',
-        type: 'error'
-      })
+    } else {
+      // Save to localStorage for guest users
+      localStorage.setItem('cart', JSON.stringify(updatedCart))
     }
   }
 
-  const removeFromCart = async (id) => {
-    if (!isAuthenticated) {
-      setToast({
-        message: 'Please log in to modify your cart',
-        type: 'error'
-      })
-      return
-    }
-
-    const updatedCart = cart.filter(item => item.id !== id)
+  const removeFromCart = async (id, size) => {
+    const updatedCart = cart.filter(item => !(item.id === id && item.size === size))
     setCart(updatedCart)
     
-    // Sync with backend
-    try {
-      const cartItem = cart.find(item => item.id === id)
-      if (cartItem) {
-        const itemId = cartItem.cartItemId || cartItem.id
-        await axios.delete(`${API_BASE_URL}/cart/items/${itemId}`)
+    if (isAuthenticated) {
+      // Sync with backend for authenticated users
+      try {
+        const cartItem = cart.find(item => item.id === id && item.size === size)
+        if (cartItem) {
+          const itemId = cartItem.cartItemId || cartItem.id
+          await axios.delete(`${API_BASE_URL}/cart/items/${itemId}`)
+        }
+        
+        setToast({
+          message: 'Item removed from cart',
+          type: 'success'
+        })
+      } catch (error) {
+        console.error('Error removing cart item:', error)
+        // Revert cart state if backend sync fails
+        setCart(cart)
+        setToast({
+          message: 'Failed to remove item. Please try again.',
+          type: 'error'
+        })
       }
-      
+    } else {
+      // Save to localStorage for guest users
+      localStorage.setItem('cart', JSON.stringify(updatedCart))
       setToast({
         message: 'Item removed from cart',
         type: 'success'
-      })
-    } catch (error) {
-      console.error('Error removing cart item:', error)
-      // Revert cart state if backend sync fails
-      setCart(cart)
-      setToast({
-        message: 'Failed to remove item. Please try again.',
-        type: 'error'
       })
     }
   }
@@ -297,7 +402,7 @@ function AppContent() {
             isAuthenticated ? <Navigate to="/shoes" /> : <SignUpPage setToast={setToast} />
           } />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/shoes" element={<Shoes addToCart={addToCart} isAuthenticated={isAuthenticated} />} />
+          <Route path="/shoes" element={<Shoes addToCart={addToCart} isAuthenticated={isAuthenticated} user={user} />} />
           <Route path="/shoes/:id" element={<DetailsShoesPage addToCart={addToCart} isAuthenticated={isAuthenticated} />} />
           <Route path="/search" element={<SearchPage addToCart={addToCart} isAuthenticated={isAuthenticated} />} />
           

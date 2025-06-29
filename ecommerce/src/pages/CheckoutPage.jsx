@@ -68,8 +68,10 @@ const CheckoutPage = ({ cart, user, onOrderComplete, isAuthenticated }) => {
           phone: shippingInfo.phone
         },
         items: cart.map(item => ({
+          productId: item.id,
           name: item.name,
           image: item.image || 'https://via.placeholder.com/200',
+          size: item.size,
           price: item.price,
           quantity: item.quantity
         }))
@@ -240,11 +242,12 @@ const CheckoutPage = ({ cart, user, onOrderComplete, isAuthenticated }) => {
               <div className="order-summary">
                 <div className="order-items">
                   {cart.map(item => (
-                    <div key={item.id} className="order-item">
+                    <div key={`${item.id}-${item.size || 'no-size'}`} className="order-item">
                       <img src={item.image} alt={item.name} />
                       <div className="item-details">
                         <h4>{item.name}</h4>
                         <p>Qty: {item.quantity}</p>
+                        {item.size && <p>Size: {item.size}</p>}
                         <p>₱{item.price}</p>
                       </div>
                       <div className="item-total">₱{(item.price * item.quantity).toFixed(2)}</div>
@@ -287,11 +290,12 @@ const CheckoutPage = ({ cart, user, onOrderComplete, isAuthenticated }) => {
           <h3>Order Summary</h3>
           <div className="sidebar-items">
             {cart.map(item => (
-              <div key={item.id} className="sidebar-item">
+              <div key={`${item.id}-${item.size || 'no-size'}`} className="sidebar-item">
                 <img src={item.image} alt={item.name} />
                 <div>
                   <p>{item.name}</p>
                   <p>Qty: {item.quantity}</p>
+                  {item.size && <p>Size: {item.size}</p>}
                 </div>
                 <span>₱{(item.price * item.quantity).toFixed(2)}</span>
               </div>

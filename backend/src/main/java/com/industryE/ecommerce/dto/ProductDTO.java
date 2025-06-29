@@ -1,13 +1,20 @@
 package com.industryE.ecommerce.dto;
 
+import java.util.List;
+
 public class ProductDTO {
     private Long id;
     private String name;
     private String description;
     private Double price;
-    private String imageUrl;
     private String category;
+    private String availableSizes;
     private Boolean inStock;
+    private String image;
+    private String color;
+    private String brand;
+    private Double rating;
+    private List<ProductSizeInventoryDTO> sizeInventory;
     
     // Default constructor
     public ProductDTO() {
@@ -15,13 +22,30 @@ public class ProductDTO {
     
     // Constructor with fields
     public ProductDTO(Long id, String name, String description, Double price, 
-                     String imageUrl, String category, Boolean inStock) {
+                     String category, String availableSizes, Boolean inStock,
+                     String image, String color, String brand, Double rating) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.imageUrl = imageUrl;
         this.category = category;
+        this.availableSizes = availableSizes;
+        this.inStock = inStock;
+        this.image = image;
+        this.color = color;
+        this.brand = brand;
+        this.rating = rating;
+    }
+    
+    // Legacy constructor for backward compatibility
+    public ProductDTO(Long id, String name, String description, Double price, 
+                     String category, String availableSizes, Boolean inStock) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+        this.availableSizes = availableSizes;
         this.inStock = inStock;
     }
     
@@ -58,14 +82,6 @@ public class ProductDTO {
         this.price = price;
     }
     
-    public String getImageUrl() {
-        return imageUrl;
-    }
-    
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-    
     public String getCategory() {
         return category;
     }
@@ -74,11 +90,59 @@ public class ProductDTO {
         this.category = category;
     }
     
+    public String getAvailableSizes() {
+        return availableSizes;
+    }
+    
+    public void setAvailableSizes(String availableSizes) {
+        this.availableSizes = availableSizes;
+    }
+    
     public Boolean getInStock() {
         return inStock;
     }
     
     public void setInStock(Boolean inStock) {
         this.inStock = inStock;
+    }
+    
+    public String getImage() {
+        return image;
+    }
+    
+    public void setImage(String image) {
+        this.image = image;
+    }
+    
+    public String getColor() {
+        return color;
+    }
+    
+    public void setColor(String color) {
+        this.color = color;
+    }
+    
+    public String getBrand() {
+        return brand;
+    }
+    
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+    
+    public Double getRating() {
+        return rating;
+    }
+    
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+    
+    public List<ProductSizeInventoryDTO> getSizeInventory() {
+        return sizeInventory;
+    }
+    
+    public void setSizeInventory(List<ProductSizeInventoryDTO> sizeInventory) {
+        this.sizeInventory = sizeInventory;
     }
 }

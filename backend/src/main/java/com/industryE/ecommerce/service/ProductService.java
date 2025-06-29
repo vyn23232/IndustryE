@@ -15,6 +15,9 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+    
+    @Autowired
+    private ProductSizeInventoryService sizeInventoryService;
 
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll().stream()
@@ -53,8 +56,8 @@ public class ProductService {
         existingProduct.setName(productDTO.getName());
         existingProduct.setDescription(productDTO.getDescription());
         existingProduct.setPrice(productDTO.getPrice());
-        existingProduct.setImageUrl(productDTO.getImageUrl());
         existingProduct.setCategory(productDTO.getCategory());
+        existingProduct.setAvailableSizes(productDTO.getAvailableSizes());
         existingProduct.setInStock(productDTO.getInStock());
         
         Product updatedProduct = productRepository.save(existingProduct);
@@ -70,15 +73,24 @@ public class ProductService {
 
     // Helper methods
     public ProductDTO convertToDTO(Product product) {
-        return new ProductDTO(
+        ProductDTO dto = new ProductDTO(
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
-                product.getImageUrl(),
                 product.getCategory(),
-                product.getInStock()
+                product.getAvailableSizes(),
+                product.getInStock(),
+                product.getImage(),
+                product.getColor(),
+                product.getBrand(),
+                product.getRating()
         );
+        
+        // Add size inventory information
+        dto.setSizeInventory(sizeInventoryService.getSizeInventoryByProductId(product.getId()));
+        
+        return dto;
     }
 
     private Product convertToEntity(ProductDTO productDTO) {
@@ -86,8 +98,12 @@ public class ProductService {
                 productDTO.getName(),
                 productDTO.getDescription(),
                 productDTO.getPrice(),
-                productDTO.getImageUrl(),
-                productDTO.getCategory()
+                productDTO.getAvailableSizes(),
+                productDTO.getCategory(),
+                productDTO.getImage(),
+                productDTO.getColor(),
+                productDTO.getBrand(),
+                productDTO.getRating()
         );
         Boolean inStock = productDTO.getInStock();
         product.setInStock(inStock == null ? Boolean.TRUE : inStock);

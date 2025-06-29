@@ -35,6 +35,9 @@ public class CartService {
     @Autowired
     private ProductRepository productRepository;
     
+    @Autowired
+    private ProductSizeInventoryService sizeInventoryService;
+    
     public CartResponse getCartByUser(User user) {
         Optional<Cart> cartOpt = cartRepository.findByUserIdWithItems(user.getId());
         
@@ -51,6 +54,11 @@ public class CartService {
     }
     
     public CartResponse addToCart(User user, AddToCartRequest request) {
+        // Check size availability first
+        if (!sizeInventoryService.checkAvailability(request.getProductId(), request.getSize(), request.getQuantity())) {
+            throw new RuntimeException("Size " + request.getSize() + " is not available or insufficient quantity");
+        }
+        
         // Get or create cart
         Cart cart = cartRepository.findByUserId(user.getId())
                 .orElseGet(() -> {
@@ -63,20 +71,30 @@ public class CartService {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         
-        // Check if item already exists in cart
-        Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductId(
-                cart.getId(), product.getId());
+        // Check if item already exists in cart with same size
+        Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductIdAndSize(
+                cart.getId(), product.getId(), request.getSize());
         
         if (existingItem.isPresent()) {
             // Update quantity
             CartItem item = existingItem.get();
-            item.setQuantity(item.getQuantity() + request.getQuantity());
+            int newQuantity = item.getQuantity() + request.getQuantity();
+            
+            // Check if new quantity is available
+            if (!sizeInventoryService.checkAvailability(request.getProductId(), request.getSize(), newQuantity)) {
+                throw new RuntimeException("Cannot add " + request.getQuantity() + " more items. Only " + 
+                    (sizeInventoryService.getSizeInventory(request.getProductId(), request.getSize()).getAvailableQuantity() - item.getQuantity()) + 
+                    " available in size " + request.getSize());
+            }
+            
+            item.setQuantity(newQuantity);
             cartItemRepository.save(item);
         } else {
             // Add new item
             CartItem newItem = new CartItem();
             newItem.setCart(cart);
             newItem.setProduct(product);
+            newItem.setSize(request.getSize());
             newItem.setQuantity(request.getQuantity());
             newItem.setUnitPrice(BigDecimal.valueOf(product.getPrice()));
             cartItemRepository.save(newItem);
@@ -169,7 +187,8 @@ public class CartService {
         response.setId(item.getId());
         response.setProductId(item.getProduct().getId());
         response.setProductName(item.getProduct().getName());
-        response.setProductImage(item.getProduct().getImageUrl());
+        response.setProductImage(""); // Images handled in frontend
+        response.setSize(item.getSize());
         response.setUnitPrice(item.getUnitPrice());
         response.setQuantity(item.getQuantity());
         response.setTotalPrice(item.getTotalPrice());

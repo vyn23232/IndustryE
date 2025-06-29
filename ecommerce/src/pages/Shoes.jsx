@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
+import { mapProductsWithImages } from '../utils/imageMapper'
 import axios from 'axios'
 import '../css/AllShoes.css'
 
-const Shoes = ({ addToCart, isAuthenticated }) => {
+const Shoes = ({ addToCart, isAuthenticated, user }) => {
   const [shoes, setShoes] = useState([])
   const [allShoes, setAllShoes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -22,7 +23,7 @@ const Shoes = ({ addToCart, isAuthenticated }) => {
     { key: 'limited', label: 'Limited Edition' }
   ]
 
-  // Fetch products from backend
+  // Fetch products from local data
   useEffect(() => {
     fetchProducts()
   }, [])
@@ -66,34 +67,17 @@ const Shoes = ({ addToCart, isAuthenticated }) => {
 
   const fetchProducts = async () => {
     try {
+      setLoading(true)
+      // Fetch products from backend API
       const response = await axios.get('http://localhost:8080/api/products')
-      const products = response.data.map(product => ({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        color: product.category || 'Default',
-        rating: 4.8,
-        image: product.imageUrl || 'https://via.placeholder.com/200',
-        description: product.description,
-        category: product.category
-      }))
-      setAllShoes(products)
+      
+      // Map backend data with local images
+      const productsWithImages = mapProductsWithImages(response.data)
+      setAllShoes(productsWithImages)
     } catch (error) {
-      console.error('Error fetching products from backend:', error)
-      // Show minimal fallback data if backend is not available
-      const fallbackProducts = [
-        { 
-          id: 1, 
-          name: 'Sample Product', 
-          price: 199, 
-          color: 'Default', 
-          rating: 4.8, 
-          image: 'https://via.placeholder.com/200x200?text=No+Image',
-          description: 'Backend connection failed - please ensure backend is running',
-          category: 'casual'
-        }
-      ]
-      setAllShoes(fallbackProducts)
+      console.error('Error loading products from backend:', error)
+      // Fallback to empty array or show error message
+      setAllShoes([])
     } finally {
       setLoading(false)
     }
@@ -239,7 +223,7 @@ const Shoes = ({ addToCart, isAuthenticated }) => {
                   </button>
                 </div>
               ) : (
-                <p>No products available. Please check if the backend is running.</p>
+                <p>No products available in local data.</p>
               )}
             </div>
           ) : (
@@ -267,19 +251,7 @@ const Shoes = ({ addToCart, isAuthenticated }) => {
                             objectFit: 'contain',
                             borderRadius: '8px'
                           }}
-                          onError={(e) => {
-                            // Fallback image if the main image fails to load
-                            e.target.src = `https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop&crop=center&auto=format&fm=webp&q=80`;
-                          }}
                         />
-                        <button 
-                          className="wishlist-btn"
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent card click when wishlist is clicked
-                          }}
-                        >
-                          ♡
-                        </button>
                       </div>
                       <div className="product-info">
                         <h3 className="product-name">{shoe.name}</h3>

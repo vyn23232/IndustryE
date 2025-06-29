@@ -1,7 +1,6 @@
 package com.industryE.ecommerce.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.industryE.ecommerce.dto.ChangePasswordRequest;
@@ -15,9 +14,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-    
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
@@ -68,14 +64,14 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Verify current password
-        if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
+        // Verify current password (plain text comparison)
+        if (!changePasswordRequest.getCurrentPassword().equals(user.getPassword())) {
             throw new RuntimeException("Current password is incorrect");
         }
 
-        // Update password
-        String encodedNewPassword = passwordEncoder.encode(changePasswordRequest.getNewPassword());
-        user.setPassword(encodedNewPassword);
+        // Update password (store as plain text)
+        String newPassword = changePasswordRequest.getNewPassword();
+        user.setPassword(newPassword);
         userRepository.save(user);
     }
 

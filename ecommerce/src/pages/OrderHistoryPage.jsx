@@ -7,6 +7,9 @@ const OrderHistoryPage = ({ user }) => {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [selectedOrder, setSelectedOrder] = useState(null)
+  const [showOrderModal, setShowOrderModal] = useState(false)
+  const [loadingOrderDetails, setLoadingOrderDetails] = useState(false)
   
   useEffect(() => {
     fetchUserOrders()
@@ -39,6 +42,32 @@ const OrderHistoryPage = ({ user }) => {
     }
   }
 
+  const fetchOrderDetails = async (orderId) => {
+    try {
+      setLoadingOrderDetails(true)
+      const token = localStorage.getItem('token')
+      
+      const response = await axios.get(`http://localhost:8080/api/orders/${orderId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
+      setSelectedOrder(response.data)
+      setShowOrderModal(true)
+    } catch (error) {
+      console.error('Error fetching order details:', error)
+      alert('Failed to load order details. Please try again.')
+    } finally {
+      setLoadingOrderDetails(false)
+    }
+  }
+
+  const closeOrderModal = () => {
+    setShowOrderModal(false)
+    setSelectedOrder(null)
+  }
+
   const formatOrderStatus = (status) => {
     const statusClass = `order-status status-${status.toLowerCase()}`
     return <span className={statusClass}>{status}</span>
@@ -59,6 +88,15 @@ const OrderHistoryPage = ({ user }) => {
       hour: '2-digit',
       minute: '2-digit'
     })
+  }
+
+  const handleViewDetails = (order) => {
+    fetchOrderDetails(order.id)
+  }
+
+  const handleReorder = (order) => {
+    // TODO: Implement reorder functionality
+    alert('Reorder functionality will be implemented soon!')
   }
 
   if (loading) {
@@ -192,11 +230,18 @@ const OrderHistoryPage = ({ user }) => {
                 )}
 
                 <div className="order-actions">
-                  <button className="action-btn view-details-btn">
-                    View Details
+                  <button 
+                    className="action-btn view-details-btn"
+                    onClick={() => handleViewDetails(order)}
+                    disabled={loadingOrderDetails}
+                  >
+                    {loadingOrderDetails ? 'Loading...' : 'View Details'}
                   </button>
                   {(order.status === 'COMPLETED' || order.status === 'DELIVERED') && (
-                    <button className="action-btn reorder-btn">
+                    <button 
+                      className="action-btn reorder-btn"
+                      onClick={() => handleReorder(order)}
+                    >
                       Reorder
                     </button>
                   )}
@@ -206,6 +251,92 @@ const OrderHistoryPage = ({ user }) => {
           </div>
         )}
       </div>
+
+      {/* Order Details Modal */}
+      {showOrderModal && selectedOrder && (
+        <div className="modal-overlay" onClick={closeOrderModal}>
+          <div className="order-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={closeOrderModal}>×</button>
+            <div className="order-modal-content">
+              <div className="order-modal-header">
+                <h2>Order Details</h2>
+                <div className="order-modal-info">
+                  <p><strong>Order Number:</strong> #{selectedOrder.orderNumber}</p>
+                  <p><strong>Order Date:</strong> {formatDate(selectedOrder.orderDate)}</p>
+                  <p><strong>Status:</strong> {formatOrderStatus(selectedOrder.status)}</p>
+                </div>
+              </div>
+
+              <div className="order-modal-body">
+                {/* Shipping Information */}
+                <div className="modal-section">
+                  <h3>Shipping Information</h3>
+                  {selectedOrder.shippingInfo ? (
+                    <div className="shipping-details">
+                      <p><strong>Name:</strong> {selectedOrder.shippingInfo.firstName} {selectedOrder.shippingInfo.lastName}</p>
+                      <p><strong>Address:</strong> {selectedOrder.shippingInfo.address}</p>
+                      <p><strong>City:</strong> {selectedOrder.shippingInfo.city}</p>
+                      <p><strong>Province:</strong> {selectedOrder.shippingInfo.province}</p>
+                      <p><strong>Postal Code:</strong> {selectedOrder.shippingInfo.postalCode}</p>
+                      <p><strong>Phone:</strong> {selectedOrder.shippingInfo.phone}</p>
+                    </div>
+                  ) : (
+                    <p>No shipping information available</p>
+                  )}
+                </div>
+
+                {/* Order Items */}
+                <div className="modal-section">
+                  <h3>Order Items</h3>
+                  {selectedOrder.orderItems && selectedOrder.orderItems.length > 0 ? (
+                    <div className="modal-order-items">
+                      {selectedOrder.orderItems.map((item, index) => (
+                        <div key={index} className="modal-order-item">
+                          <div className="item-details">
+                            <h4>{item.productName}</h4>
+                            <p>Quantity: {item.quantity}</p>
+                            {item.size && <p>Size: {item.size}</p>}
+                          </div>
+                          <div className="item-pricing">
+                            <p>Unit Price: {formatCurrency(item.unitPrice)}</p>
+                            <p><strong>Total: {formatCurrency(item.totalPrice)}</strong></p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>No order items available</p>
+                  )}
+                </div>
+
+                {/* Payment Information */}
+                <div className="modal-section">
+                  <h3>Payment Information</h3>
+                  <p><strong>Payment Method:</strong> {selectedOrder.paymentMethod || 'Cash on Delivery'}</p>
+                  <p><strong>Payment Status:</strong> {selectedOrder.paymentStatus || 'Pending'}</p>
+                  <div className="order-total">
+                    <h3><strong>Total Amount: {formatCurrency(selectedOrder.totalAmount)}</strong></h3>
+                  </div>
+                </div>
+              </div>
+
+              <div className="order-modal-footer">
+                <button className="btn-secondary" onClick={closeOrderModal}>
+                  Close
+                </button>
+                {(selectedOrder.status === 'COMPLETED' || selectedOrder.status === 'DELIVERED') && (
+                  <button 
+                    className="btn-primary"
+                    onClick={() => handleReorder(selectedOrder)}
+                  >
+                    Reorder
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
+import { mapProductsWithImages } from '../utils/imageMapper'
 import axios from 'axios'
 import '../css/SearchPage.css'
 
@@ -11,6 +12,11 @@ const SearchPage = ({ addToCart, isAuthenticated }) => {
   const [quantity, setQuantity] = useState(1)
   const [searchParams, setSearchParams] = useSearchParams()
   const [searchQuery, setSearchQuery] = useState('')
+  const [showSizeModal, setShowSizeModal] = useState(false)
+  const [selectedSize, setSelectedSize] = useState('')
+  const [alertMessage, setAlertMessage] = useState('')
+  const [alertType, setAlertType] = useState('')
+  const [favorites, setFavorites] = useState([])
   const navigate = useNavigate()
 
   // Get search query from URL params
@@ -28,21 +34,15 @@ const SearchPage = ({ addToCart, isAuthenticated }) => {
   const fetchAllProducts = async () => {
     try {
       setLoading(true)
+      // Fetch products from backend API
       const response = await axios.get('http://localhost:8080/api/products')
-      const products = response.data.map(product => ({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        color: product.category || 'Default',
-        rating: 4.8,
-        image: product.imageUrl || 'https://via.placeholder.com/200',
-        description: product.description,
-        category: product.category
-      }))
-      setAllShoes(products)
-      setSearchResults(products)
+      
+      // Map backend data with local images
+      const productsWithImages = mapProductsWithImages(response.data)
+      setAllShoes(productsWithImages)
+      setSearchResults(productsWithImages)
     } catch (error) {
-      console.error('Error fetching products:', error)
+      console.error('Error loading products from backend:', error)
       setSearchResults([])
     } finally {
       setLoading(false)
@@ -58,37 +58,24 @@ const SearchPage = ({ addToCart, isAuthenticated }) => {
     try {
       setLoading(true)
       
-      // Try backend search first
-      try {
-        const response = await axios.get(`http://localhost:8080/api/products/search?keyword=${encodeURIComponent(query)}`)
-        const products = response.data.map(product => ({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          color: product.category || 'Default',
-          rating: 4.8,
-          image: product.imageUrl || 'https://via.placeholder.com/200',
-          description: product.description,
-          category: product.category
-        }))
-        setSearchResults(products)
-      } catch (backendError) {
-        // Fallback to frontend filtering if backend search fails
-        console.warn('Backend search failed, using frontend filtering:', backendError)
-        if (allShoes.length === 0) {
-          await fetchAllProducts()
-        }
-        
-        const filteredResults = allShoes.filter(shoe => 
-          shoe.name.toLowerCase().includes(query.toLowerCase()) ||
-          shoe.description.toLowerCase().includes(query.toLowerCase()) ||
-          shoe.category.toLowerCase().includes(query.toLowerCase())
-        )
-        setSearchResults(filteredResults)
-      }
+      // Use backend search endpoint
+      const response = await axios.get(`http://localhost:8080/api/products/search?keyword=${encodeURIComponent(query)}`)
+      const searchResults = mapProductsWithImages(response.data)
+      setSearchResults(searchResults)
     } catch (error) {
       console.error('Error performing search:', error)
-      setSearchResults([])
+      // Fallback to local filtering if backend search fails
+      if (allShoes.length === 0) {
+        await fetchAllProducts()
+      }
+      
+      const filteredResults = allShoes.filter(shoe => 
+        shoe.name.toLowerCase().includes(query.toLowerCase()) ||
+        shoe.description.toLowerCase().includes(query.toLowerCase()) ||
+        shoe.category.toLowerCase().includes(query.toLowerCase()) ||
+        shoe.brand.toLowerCase().includes(query.toLowerCase())
+      )
+      setSearchResults(filteredResults)
     } finally {
       setLoading(false)
     }
@@ -136,7 +123,50 @@ const SearchPage = ({ addToCart, isAuthenticated }) => {
 
   const handleQuickAddToCart = (e, shoe) => {
     e.stopPropagation()
-    addToCart(shoe, 1)
+    setSelectedShoe(shoe)
+    setSelectedSize('')
+    setQuantity(1)
+    setShowSizeModal(true)
+  }
+
+  const handleSizeModalClose = () => {
+    setShowSizeModal(false)
+    setSelectedShoe(null)
+    setSelectedSize('')
+    setQuantity(1)
+    setAlertMessage('')
+    setAlertType('')
+  }
+
+  const handleSizeModalAddToCart = async () => {
+    if (!selectedSize) {
+      setAlertMessage('Please select a size before adding to cart.')
+      setAlertType('error')
+      setTimeout(() => {
+        setAlertMessage('')
+        setAlertType('')
+      }, 3000)
+      return
+    }
+
+    const shoeWithSize = {
+      ...selectedShoe,
+      selectedSize,
+      image: selectedShoe.image
+    }
+
+    try {
+      await addToCart(shoeWithSize, quantity)
+      handleSizeModalClose()
+    } catch (error) {
+      console.error('Error adding to cart:', error)
+      setAlertMessage('Failed to add item to cart. Please try again.')
+      setAlertType('error')
+      setTimeout(() => {
+        setAlertMessage('')
+        setAlertType('')
+      }, 3000)
+    }
   }
 
   return (
@@ -251,9 +281,6 @@ const SearchPage = ({ addToCart, isAuthenticated }) => {
                     <img 
                       src={shoe.image} 
                       alt={shoe.name}
-                      onError={(e) => {
-                        e.target.src = `https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop&crop=center&auto=format&fm=webp&q=80`;
-                      }}
                     />
                     <button 
                       className="wishlist-btn"
@@ -296,8 +323,95 @@ const SearchPage = ({ addToCart, isAuthenticated }) => {
         </div>
       </section>
 
+      {/* Size Selection Modal */}
+      {showSizeModal && selectedShoe && (
+        <div className="modal-overlay" onClick={handleSizeModalClose}>
+          <div className="size-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={handleSizeModalClose}>×</button>
+            <div className="size-modal-content">
+              <div className="size-modal-header">
+                <div className="product-preview">
+                  <img src={selectedShoe.image} alt={selectedShoe.name} />
+                  <div className="product-details">
+                    <h3>{selectedShoe.name}</h3>
+                    <p className="product-price">₱{selectedShoe.price}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Size Selection */}
+              <div className="size-selection">
+                <h3>Select Size</h3>
+                <div className="size-options">
+                  {(selectedShoe.sizes || ['7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12']).map((size) => (
+                    <button
+                      key={size}
+                      className={`size-btn ${selectedSize === size ? 'selected' : ''}`}
+                      onClick={() => setSelectedSize(size)}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+                {!selectedSize && (
+                  <p className="size-hint">Please select a size</p>
+                )}
+              </div>
+
+              {/* Quantity Selection */}
+              <div className="quantity-selection">
+                <h3>Quantity</h3>
+                <div className="quantity-controls">
+                  <button 
+                    className="quantity-btn"
+                    onClick={() => setQuantity(prev => prev > 1 ? prev - 1 : 1)}
+                    disabled={quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <span className="quantity-display">{quantity}</span>
+                  <button 
+                    className="quantity-btn"
+                    onClick={() => setQuantity(prev => prev + 1)}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* Alert Messages */}
+              {alertMessage && (
+                <div className={`alert-message ${alertType}`}>
+                  {alertType === 'error' && '⚠ '}
+                  {alertType === 'warning' && '⚠ '}
+                  {alertType === 'success' && '✓ '}
+                  {alertMessage}
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="modal-actions">
+                <button 
+                  className="cancel-btn btn-secondary"
+                  onClick={handleSizeModalClose}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="add-to-cart-btn btn-primary"
+                  onClick={handleSizeModalAddToCart}
+                  disabled={!selectedSize}
+                >
+                  Add to Cart - ₱{(selectedShoe.price * quantity).toFixed(2)}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Product Detail Modal */}
-      {selectedShoe && (
+      {selectedShoe && !showSizeModal && (
         <div className="modal-overlay" onClick={closeShoeModal}>
           <div className="product-modal" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close-btn" onClick={closeShoeModal}>×</button>
@@ -306,9 +420,6 @@ const SearchPage = ({ addToCart, isAuthenticated }) => {
                 <img 
                   src={selectedShoe.image} 
                   alt={selectedShoe.name}
-                  onError={(e) => {
-                    e.target.src = `https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop&crop=center&auto=format&fm=webp&q=80`;
-                  }}
                 />
               </div>
               <div className="modal-product-info">

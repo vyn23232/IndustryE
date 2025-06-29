@@ -11,12 +11,16 @@ public class AddToCartRequest {
     @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
     
+    @NotNull(message = "Size is required")
+    private String size;
+    
     // Constructors
     public AddToCartRequest() {}
     
-    public AddToCartRequest(Long productId, Integer quantity) {
+    public AddToCartRequest(Long productId, Integer quantity, String size) {
         this.productId = productId;
         this.quantity = quantity;
+        this.size = size;
     }
     
     // Getters and setters
@@ -25,4 +29,7 @@ public class AddToCartRequest {
     
     public Integer getQuantity() { return quantity; }
     public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    
+    public String getSize() { return size; }
+    public void setSize(String size) { this.size = size; }
 }

@@ -1,7 +1,7 @@
 package com.industryE.ecommerce.service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +22,12 @@ public class OrderService {
     
     @Autowired
     private OrderRepository orderRepository;
+    
+    @Autowired
+    private CartService cartService;
+    
+    @Autowired
+    private ProductSizeInventoryService sizeInventoryService;
     
     public OrderResponse createOrder(CreateOrderRequest request, User user) {
         // Ensure the order is properly associated with the authenticated user
@@ -44,7 +50,47 @@ public class OrderService {
         
         order.setPaymentMethod(request.getPaymentMethod());
         
+        // Save order first to get ID
         Order savedOrder = orderRepository.save(order);
+        
+        // Create order items from request
+        List<OrderItem> orderItems = new ArrayList<>();
+        if (request.getItems() != null && !request.getItems().isEmpty()) {
+            for (CreateOrderRequest.OrderItemRequest itemRequest : request.getItems()) {
+                OrderItem orderItem = new OrderItem();
+                orderItem.setOrder(savedOrder);
+                orderItem.setProductName(itemRequest.getName());
+                orderItem.setProductImage(itemRequest.getImage());
+                orderItem.setSize(itemRequest.getSize());
+                orderItem.setUnitPrice(BigDecimal.valueOf(itemRequest.getPrice()));
+                orderItem.setQuantity(itemRequest.getQuantity());
+                orderItem.setTotalPrice(BigDecimal.valueOf(itemRequest.getPrice() * itemRequest.getQuantity()));
+                
+                orderItems.add(orderItem);
+                
+                // Update inventory if size is provided
+                if (itemRequest.getSize() != null && itemRequest.getProductId() != null) {
+                    try {
+                        sizeInventoryService.confirmSale(itemRequest.getProductId(), itemRequest.getSize(), itemRequest.getQuantity());
+                    } catch (Exception e) {
+                        // Log error but continue with order creation
+                        System.err.println("Failed to update inventory for product " + itemRequest.getProductId() + ", size " + itemRequest.getSize() + ": " + e.getMessage());
+                    }
+                }
+            }
+        }
+        
+        savedOrder.setOrderItems(orderItems);
+        savedOrder = orderRepository.save(savedOrder);
+        
+        // Clear user's cart after successful order
+        try {
+            cartService.clearCart(user);
+        } catch (Exception e) {
+            // Log error but continue
+            System.err.println("Failed to clear cart for user " + user.getId() + ": " + e.getMessage());
+        }
+        
         return convertToResponse(savedOrder);
     }
     
@@ -74,6 +120,8 @@ public class OrderService {
         response.setTotalAmount(order.getTotalAmount());
         response.setStatus(order.getStatus());
         response.setOrderDate(order.getOrderDate());
+        response.setPaymentMethod(order.getPaymentMethod());
+        response.setPaymentStatus(order.getPaymentStatus());
         
         // Set shipping info
         OrderResponse.ShippingInfo shippingInfo = new OrderResponse.ShippingInfo();
@@ -86,6 +134,25 @@ public class OrderService {
         shippingInfo.setPhone(order.getShippingPhone());
         response.setShippingInfo(shippingInfo);
         
+        // Set order items
+        if (order.getOrderItems() != null && !order.getOrderItems().isEmpty()) {
+            List<OrderResponse.OrderItemResponse> orderItemResponses = order.getOrderItems().stream()
+                    .map(this::convertOrderItemToResponse)
+                    .collect(Collectors.toList());
+            response.setOrderItems(orderItemResponses);
+        }
+        
+        return response;
+    }
+    
+    private OrderResponse.OrderItemResponse convertOrderItemToResponse(OrderItem orderItem) {
+        OrderResponse.OrderItemResponse response = new OrderResponse.OrderItemResponse();
+        response.setProductName(orderItem.getProductName());
+        response.setProductImage(orderItem.getProductImage());
+        response.setSize(orderItem.getSize());
+        response.setUnitPrice(orderItem.getUnitPrice());
+        response.setQuantity(orderItem.getQuantity());
+        response.setTotalPrice(orderItem.getTotalPrice());
         return response;
     }
 }

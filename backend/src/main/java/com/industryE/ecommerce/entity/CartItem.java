@@ -27,6 +27,9 @@ public class CartItem {
     @JoinColumn(name = "product_id")
     private Product product;
     
+    @Column(name = "size")
+    private String size;
+    
     @Column(name = "quantity")
     private Integer quantity;
     
@@ -53,6 +56,9 @@ public class CartItem {
     
     public Product getProduct() { return product; }
     public void setProduct(Product product) { this.product = product; }
+    
+    public String getSize() { return size; }
+    public void setSize(String size) { this.size = size; }
     
     public Integer getQuantity() { return quantity; }
     public void setQuantity(Integer quantity) { 

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.industryE.ecommerce.dto.AddToCartRequest;
@@ -25,22 +26,22 @@ import com.industryE.ecommerce.repository.ProductRepository;
 @Service
 @Transactional
 public class CartService {
-    
+
     @Autowired
     private CartRepository cartRepository;
-    
+
     @Autowired
     private CartItemRepository cartItemRepository;
-    
+
     @Autowired
     private ProductRepository productRepository;
-    
+
     @Autowired
     private ProductSizeInventoryService sizeInventoryService;
-    
+
     public CartResponse getCartByUser(User user) {
         Optional<Cart> cartOpt = cartRepository.findByUserIdWithItems(user.getId());
-        
+
         if (cartOpt.isPresent()) {
             return convertToResponse(cartOpt.get());
         } else {
@@ -52,13 +53,13 @@ public class CartService {
             return convertToResponse(savedCart);
         }
     }
-    
+
     public CartResponse addToCart(User user, AddToCartRequest request) {
         // Check size availability first
         if (!sizeInventoryService.checkAvailability(request.getProductId(), request.getSize(), request.getQuantity())) {
             throw new RuntimeException("Size " + request.getSize() + " is not available or insufficient quantity");
         }
-        
+
         // Get or create cart
         Cart cart = cartRepository.findByUserId(user.getId())
                 .orElseGet(() -> {
@@ -66,27 +67,29 @@ public class CartService {
                     newCart.setUser(user);
                     return cartRepository.save(newCart);
                 });
-        
+
         // Get product
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        
+
         // Check if item already exists in cart with same size
         Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductIdAndSize(
                 cart.getId(), product.getId(), request.getSize());
-        
+
         if (existingItem.isPresent()) {
             // Update quantity
             CartItem item = existingItem.get();
             int newQuantity = item.getQuantity() + request.getQuantity();
-            
+
             // Check if new quantity is available
             if (!sizeInventoryService.checkAvailability(request.getProductId(), request.getSize(), newQuantity)) {
-                throw new RuntimeException("Cannot add " + request.getQuantity() + " more items. Only " + 
-                    (sizeInventoryService.getSizeInventory(request.getProductId(), request.getSize()).getAvailableQuantity() - item.getQuantity()) + 
-                    " available in size " + request.getSize());
+                throw new RuntimeException("Cannot add " + request.getQuantity() + " more items. Only " +
+                        (sizeInventoryService.getSizeInventory(request.getProductId(), request.getSize())
+                                .getAvailableQuantity() - item.getQuantity())
+                        +
+                        " available in size " + request.getSize());
             }
-            
+
             item.setQuantity(newQuantity);
             cartItemRepository.save(item);
         } else {
@@ -99,53 +102,54 @@ public class CartService {
             newItem.setUnitPrice(BigDecimal.valueOf(product.getPrice()));
             cartItemRepository.save(newItem);
         }
-        
+
         // Update cart timestamp
         cart.setUpdatedAt(LocalDateTime.now());
         cartRepository.save(cart);
-        
+
         return getCartByUser(user);
     }
-    
+
     public CartResponse updateCartItem(User user, Long cartItemId, UpdateCartItemRequest request) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
-        
+
         // Verify the cart belongs to the user
         if (!cartItem.getCart().getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Unauthorized access to cart item");
         }
-        
+
         cartItem.setQuantity(request.getQuantity());
         cartItemRepository.save(cartItem);
-        
+
         // Update cart timestamp
         Cart cart = cartItem.getCart();
         cart.setUpdatedAt(LocalDateTime.now());
         cartRepository.save(cart);
-        
+
         return getCartByUser(user);
     }
-    
+
     public CartResponse removeFromCart(User user, Long cartItemId) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
-        
+
         // Verify the cart belongs to the user
         if (!cartItem.getCart().getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Unauthorized access to cart item");
         }
-        
+
         cartItemRepository.delete(cartItem);
-        
+
         // Update cart timestamp
         Cart cart = cartItem.getCart();
         cart.setUpdatedAt(LocalDateTime.now());
         cartRepository.save(cart);
-        
+
         return getCartByUser(user);
     }
-    
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void clearCart(User user) {
         Optional<Cart> cartOpt = cartRepository.findByUserId(user.getId());
         if (cartOpt.isPresent()) {
@@ -155,20 +159,20 @@ public class CartService {
             cartRepository.save(cart);
         }
     }
-    
+
     private CartResponse convertToResponse(Cart cart) {
         CartResponse response = new CartResponse();
         response.setId(cart.getId());
         response.setUserId(cart.getUser().getId());
         response.setCreatedAt(cart.getCreatedAt());
         response.setUpdatedAt(cart.getUpdatedAt());
-        
+
         if (cart.getItems() != null) {
             List<CartResponse.CartItemResponse> itemResponses = cart.getItems().stream()
                     .map(this::convertItemToResponse)
                     .collect(Collectors.toList());
             response.setItems(itemResponses);
-            
+
             // Calculate total
             BigDecimal total = itemResponses.stream()
                     .map(CartResponse.CartItemResponse::getTotalPrice)
@@ -178,10 +182,10 @@ public class CartService {
             response.setItems(new ArrayList<>());
             response.setTotalAmount(BigDecimal.ZERO);
         }
-        
+
         return response;
     }
-    
+
     private CartResponse.CartItemResponse convertItemToResponse(CartItem item) {
         CartResponse.CartItemResponse response = new CartResponse.CartItemResponse();
         response.setId(item.getId());

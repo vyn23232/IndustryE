@@ -17,83 +17,78 @@ import com.industryE.ecommerce.entity.User;
 import com.industryE.ecommerce.repository.OrderRepository;
 
 @Service
-@Transactional
 public class OrderService {
-    
+
     @Autowired
     private OrderRepository orderRepository;
-    
-    @Autowired
-    private CartService cartService;
-    
-    @Autowired
-    private ProductSizeInventoryService sizeInventoryService;
-    
+
+    @Transactional
     public OrderResponse createOrder(CreateOrderRequest request, User user) {
-        // Ensure the order is properly associated with the authenticated user
-        Order order = new Order();
-        order.setUser(user); // Critical: Set the user who owns this order
-        order.setOrderNumber(generateOrderNumber());
-        order.setTotalAmount(request.getTotalAmount());
-        order.setStatus("PENDING");
-        
-        // Set shipping information
-        if (request.getShippingInfo() != null) {
-            order.setShippingFirstName(request.getShippingInfo().getFirstName());
-            order.setShippingLastName(request.getShippingInfo().getLastName());
-            order.setShippingAddress(request.getShippingInfo().getAddress());
-            order.setShippingCity(request.getShippingInfo().getCity());
-            order.setShippingProvince(request.getShippingInfo().getProvince());
-            order.setShippingPostalCode(request.getShippingInfo().getPostalCode());
-            order.setShippingPhone(request.getShippingInfo().getPhone());
-        }
-        
-        order.setPaymentMethod(request.getPaymentMethod());
-        
-        // Save order first to get ID
-        Order savedOrder = orderRepository.save(order);
-        
-        // Create order items from request
-        List<OrderItem> orderItems = new ArrayList<>();
-        if (request.getItems() != null && !request.getItems().isEmpty()) {
-            for (CreateOrderRequest.OrderItemRequest itemRequest : request.getItems()) {
-                OrderItem orderItem = new OrderItem();
-                orderItem.setOrder(savedOrder);
-                orderItem.setProductName(itemRequest.getName());
-                orderItem.setProductImage(itemRequest.getImage());
-                orderItem.setSize(itemRequest.getSize());
-                orderItem.setUnitPrice(BigDecimal.valueOf(itemRequest.getPrice()));
-                orderItem.setQuantity(itemRequest.getQuantity());
-                orderItem.setTotalPrice(BigDecimal.valueOf(itemRequest.getPrice() * itemRequest.getQuantity()));
-                
-                orderItems.add(orderItem);
-                
-                // Update inventory if size is provided
-                if (itemRequest.getSize() != null && itemRequest.getProductId() != null) {
-                    try {
-                        sizeInventoryService.confirmSale(itemRequest.getProductId(), itemRequest.getSize(), itemRequest.getQuantity());
-                    } catch (Exception e) {
-                        // Log error but continue with order creation
-                        System.err.println("Failed to update inventory for product " + itemRequest.getProductId() + ", size " + itemRequest.getSize() + ": " + e.getMessage());
-                    }
-                }
-            }
-        }
-        
-        savedOrder.setOrderItems(orderItems);
-        savedOrder = orderRepository.save(savedOrder);
-        
-        // Clear user's cart after successful order
         try {
-            cartService.clearCart(user);
+            // Validate input
+            if (request == null) {
+                throw new IllegalArgumentException("Order request cannot be null");
+            }
+            if (user == null) {
+                throw new IllegalArgumentException("User cannot be null");
+            }
+            if (request.getTotalAmount() == null || request.getTotalAmount() <= 0) {
+                throw new IllegalArgumentException("Total amount must be greater than 0");
+            }
+
+            // Create the order entity
+            Order order = new Order();
+            order.setUser(user);
+            order.setOrderNumber(generateOrderNumber());
+            order.setTotalAmount(BigDecimal.valueOf(request.getTotalAmount()));
+            order.setStatus("PENDING");
+
+            // Set shipping information
+            if (request.getShippingInfo() != null) {
+                order.setShippingFirstName(request.getShippingInfo().getFirstName());
+                order.setShippingLastName(request.getShippingInfo().getLastName());
+                order.setShippingAddress(request.getShippingInfo().getAddress());
+                order.setShippingCity(request.getShippingInfo().getCity());
+                order.setShippingProvince(request.getShippingInfo().getProvince());
+                order.setShippingPostalCode(request.getShippingInfo().getPostalCode());
+                order.setShippingPhone(request.getShippingInfo().getPhone());
+            }
+
+            order.setPaymentMethod(request.getPaymentMethod());
+
+            // Create order items and establish bidirectional relationship
+            List<OrderItem> orderItems = new ArrayList<>();
+            if (request.getItems() != null && !request.getItems().isEmpty()) {
+                for (CreateOrderRequest.OrderItemRequest itemRequest : request.getItems()) {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrder(order); // Set reference to order
+                    orderItem.setProductName(itemRequest.getName());
+                    orderItem.setProductImage(itemRequest.getImage() != null ? itemRequest.getImage() : "");
+                    orderItem.setSize(itemRequest.getSize());
+                    orderItem.setUnitPrice(BigDecimal.valueOf(itemRequest.getPrice()));
+                    orderItem.setQuantity(itemRequest.getQuantity());
+                    orderItem.setTotalPrice(BigDecimal.valueOf(itemRequest.getPrice() * itemRequest.getQuantity()));
+
+                    orderItems.add(orderItem);
+                }
+
+                // Set order items on the order to complete bidirectional relationship
+                order.setOrderItems(orderItems);
+            }
+
+            // Save order with items (cascade will handle order items)
+            Order savedOrder = orderRepository.save(order);
+
+            return convertToResponse(savedOrder);
         } catch (Exception e) {
-            // Log error but continue
-            System.err.println("Failed to clear cart for user " + user.getId() + ": " + e.getMessage());
+            // Log the exception details for debugging
+            System.err.println("Order creation failed: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to create order: " + e.getMessage(), e);
         }
-        
-        return convertToResponse(savedOrder);
     }
-    
+
+    @Transactional(readOnly = true)
     public List<OrderResponse> getUserOrders(Long userId) {
         // Critical fix: Only return orders that belong to the specific user
         return orderRepository.findByUserIdOrderByOrderDateDesc(userId)
@@ -101,18 +96,19 @@ public class OrderService {
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
-    
+
+    @Transactional(readOnly = true)
     public OrderResponse getOrderById(Long orderId, Long userId) {
         // Critical fix: Ensure order belongs to the requesting user
         Order order = orderRepository.findByIdAndUserId(orderId, userId)
                 .orElseThrow(() -> new RuntimeException("Order not found or access denied"));
         return convertToResponse(order);
     }
-    
+
     private String generateOrderNumber() {
         return "ORD-" + System.currentTimeMillis();
     }
-    
+
     private OrderResponse convertToResponse(Order order) {
         OrderResponse response = new OrderResponse();
         response.setId(order.getId());
@@ -122,7 +118,7 @@ public class OrderService {
         response.setOrderDate(order.getOrderDate());
         response.setPaymentMethod(order.getPaymentMethod());
         response.setPaymentStatus(order.getPaymentStatus());
-        
+
         // Set shipping info
         OrderResponse.ShippingInfo shippingInfo = new OrderResponse.ShippingInfo();
         shippingInfo.setFirstName(order.getShippingFirstName());
@@ -133,7 +129,7 @@ public class OrderService {
         shippingInfo.setPostalCode(order.getShippingPostalCode());
         shippingInfo.setPhone(order.getShippingPhone());
         response.setShippingInfo(shippingInfo);
-        
+
         // Set order items
         if (order.getOrderItems() != null && !order.getOrderItems().isEmpty()) {
             List<OrderResponse.OrderItemResponse> orderItemResponses = order.getOrderItems().stream()
@@ -141,10 +137,10 @@ public class OrderService {
                     .collect(Collectors.toList());
             response.setOrderItems(orderItemResponses);
         }
-        
+
         return response;
     }
-    
+
     private OrderResponse.OrderItemResponse convertOrderItemToResponse(OrderItem orderItem) {
         OrderResponse.OrderItemResponse response = new OrderResponse.OrderItemResponse();
         response.setProductName(orderItem.getProductName());

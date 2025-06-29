@@ -211,9 +211,6 @@ const OrderHistoryPage = ({ user }) => {
                               Qty: {item.quantity} {item.size && `• Size: ${item.size}`}
                             </div>
                           </div>
-                          <div className="item-price">
-                            {formatCurrency(item.price || item.product?.price || 0)}
-                          </div>
                         </div>
                       ))}
                       {(order.items || order.orderItems).length > 3 && (

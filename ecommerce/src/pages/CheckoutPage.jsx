@@ -79,8 +79,19 @@ const CheckoutPage = ({ cart, user, onOrderComplete, isAuthenticated }) => {
 
       console.log('Sending order data:', orderData) // Debug log
 
-      // Submit order to backend
-      const response = await axios.post('http://localhost:8080/api/orders/create', orderData)
+      // Get the JWT token from localStorage
+      const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('No authentication token found. Please log in again.')
+      }
+
+      // Submit order to backend with authentication
+      const response = await axios.post('http://localhost:8080/api/orders/create', orderData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
       
       if (response.data) {
         // Order successfully created

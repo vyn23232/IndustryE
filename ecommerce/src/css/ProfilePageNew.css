@@ -103,12 +103,10 @@
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--text-white);
-  margin-bottom: 0.5rem;
 }
 
 .user-email {
   color: var(--text-gray);
-  margin-bottom: 1.5rem;
   font-size: 0.9rem;
 }
 

@@ -40,6 +40,18 @@ const Navbar = ({ cartItemCount, isAuthenticated, user, onLogout }) => {
           <div className="brand-text">ShoeStop</div>
         </div>
 
+          {/* User Info - Only show when authenticated */}
+          {isAuthenticated && user && (
+            <div className="user-info">
+              <div className="user-avatar">
+                {user.name ? user.name.charAt(0).toUpperCase() : "?"}
+              </div>
+              <div className="user-details">
+                <div className="user-name">{user.name}</div>
+                <div className="user-email">{user.email}</div>
+              </div>
+            </div>
+          )}
         {/* Navigation Links */}
         <div className="nav-links">
           {/* General Navigation */}
@@ -115,19 +127,6 @@ const Navbar = ({ cartItemCount, isAuthenticated, user, onLogout }) => {
                 <span className="nav-label">Logout</span>
               </button>
             </>
-          )}
-          
-          {/* User Info - Only show when authenticated */}
-          {isAuthenticated && user && (
-            <div className="user-info">
-              <div className="user-avatar">
-                {user.name ? user.name.charAt(0).toUpperCase() : "?"}
-              </div>
-              <div className="user-details">
-                <div className="user-name">{user.name}</div>
-                <div className="user-email">{user.email}</div>
-              </div>
-            </div>
           )}
         </div>
 

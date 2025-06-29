@@ -447,6 +447,13 @@
   overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
+  /* Hide scrollbar for webkit browsers */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.order-modal::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
 
 .order-modal-content {

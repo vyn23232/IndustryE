@@ -225,68 +225,33 @@ function AppContent() {
     setIsAuthenticated(true)
     setUser(userData)
     localStorage.setItem('user', JSON.stringify(userData))
-    
     // Set up axios default headers for authentication
     const token = localStorage.getItem('token')
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
     }
-    
-    // Save current guest cart before loading backend cart
-    const guestCart = [...cart]
-    
-    // Load user's cart from backend
+    // Always load the cart from backend for the logged-in user
     const backendCart = await loadCartFromBackend()
-    
-    // Merge guest cart with backend cart if guest had items
-    if (guestCart.length > 0) {
-      try {
-        // Add each guest cart item to backend
-        for (const item of guestCart) {
-          await axios.post(`${API_BASE_URL}/cart/add`, {
-            productId: item.id,
-            quantity: item.quantity,
-            size: item.size
-          })
-        }
-        
-        // Reload cart from backend after merging
-        await loadCartFromBackend()
-        
-        // Clear guest cart from localStorage
-        localStorage.removeItem('cart')
-        
-        setToast({
-          message: `Welcome back, ${userData.name}! Your cart items have been merged.`,
-          type: 'success'
-        })
-      } catch (error) {
-        console.error('Error merging guest cart:', error)
-        setToast({
-          message: `Welcome back, ${userData.name}! There was an issue merging your cart items.`,
-          type: 'warning'
-        })
-      }
-    } else {
-      setToast({
-        message: `Welcome back, ${userData.name}!`,
-        type: 'success'
-      })
-    }
-    
+    setCart(backendCart)
+    // Clear any guest cart from localStorage
+    localStorage.removeItem('cart')
+    setToast({
+      message: `Welcome back, ${userData.name}!`,
+      type: 'success'
+    })
     navigate('/shoes')
   }
 
   const handleLogout = () => {
     setIsAuthenticated(false)
     setUser(null)
-    // Don't clear cart on logout - it should persist in backend
+    setCart([]) // Clear in-memory cart on logout
     localStorage.removeItem('user')
     localStorage.removeItem('token')
     delete axios.defaults.headers.common['Authorization']
     navigate('/')
     setToast({
-      message: 'Successfully logged out! Your cart items have been saved.',
+      message: 'Successfully logged out!',
       type: 'success'
     })
   }

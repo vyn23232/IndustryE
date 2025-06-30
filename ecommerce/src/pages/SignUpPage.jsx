@@ -192,11 +192,6 @@ const SignUpPage = ({ setToast }) => {
                 Sign in to ShoeStop
               </Link>
             </p>
-            <p>Are you an admin? 
-              <Link to="/admin/login" className="link-btn">
-                Admin Login
-              </Link>
-            </p>
           </div>
         </div>
 

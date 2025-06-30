@@ -230,10 +230,35 @@ function AppContent() {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
     }
-    // Always load the cart from backend for the logged-in user
-    const backendCart = await loadCartFromBackend()
+    // Load the user's cart from backend
+    let backendCart = await loadCartFromBackend()
+    // Get guest cart from localStorage
+    const guestCartRaw = localStorage.getItem('cart')
+    let guestCart = []
+    if (guestCartRaw) {
+      try {
+        guestCart = JSON.parse(guestCartRaw)
+      } catch (e) {
+        guestCart = []
+      }
+    }
+    // Only merge guest cart if backend cart is empty and guest cart has items
+    if (backendCart.length === 0 && guestCart.length > 0) {
+      try {
+        for (const item of guestCart) {
+          await axios.post(`${API_BASE_URL}/cart/add`, {
+            productId: item.id,
+            quantity: item.quantity,
+            size: item.size
+          })
+        }
+        backendCart = await loadCartFromBackend()
+      } catch (error) {
+        console.error('Error merging guest cart:', error)
+      }
+    }
     setCart(backendCart)
-    // Clear any guest cart from localStorage
+    // Always clear guest cart after login
     localStorage.removeItem('cart')
     setToast({
       message: `Welcome back, ${userData.name}!`,

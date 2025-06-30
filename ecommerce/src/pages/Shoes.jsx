@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import { mapProductsWithImages } from '../utils/imageMapper'
 import axios from 'axios'
 import '../css/AllShoes.css'
+import ShoeCard from '../components/ShoeCard'
 
 const Shoes = ({ addToCart, isAuthenticated, user }) => {
   const [shoes, setShoes] = useState([])
@@ -236,43 +237,7 @@ const Shoes = ({ addToCart, isAuthenticated, user }) => {
                   }}
                 >
                   {shoes.map((shoe) => (
-                    <div 
-                      key={shoe.id} 
-                      className="product-card"
-                      onClick={() => handleViewProduct(shoe)}
-                    >
-                      <div className="product-image">
-                        <img 
-                          src={shoe.image} 
-                          alt={shoe.name}
-                          style={{
-                            width: '80px', 
-                            height: '80px', 
-                            objectFit: 'contain',
-                            borderRadius: '8px'
-                          }}
-                        />
-                      </div>
-                      <div className="product-info">
-                        <h3 className="product-name">{shoe.name}</h3>
-                        <p className="product-color">Color: {shoe.color}</p>
-                        <div className="product-rating">
-                          <span className="stars">⭐⭐⭐⭐⭐</span>
-                          <span className="rating-value">({shoe.rating})</span>
-                        </div>
-                        <div className="product-price">₱{shoe.price}</div>
-                        {/* Always show View button - authentication check happens on details page */}
-                        <button 
-                          className="view-product-btn btn-primary"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewProduct(shoe);
-                          }}
-                        >
-                          View Details
-                        </button>
-                      </div>
-                    </div>
+                    <ShoeCard key={shoe.id} shoe={shoe} onAddToCart={handleAddToCart} />
                   ))}
                 </div>
               </div>

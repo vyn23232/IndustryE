@@ -3,7 +3,7 @@
   min-height: 100vh;
   background: var(--primary-bg);
   color: var(--text-white);
-  padding-left: 280px; /* Account for sidebar */
+
 }
 
 /* Search Header Section */

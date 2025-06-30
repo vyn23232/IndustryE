@@ -63,7 +63,7 @@ public class User implements UserDetails {
     private Role role = Role.USER;
     
     public enum Role {
-        USER
+        USER,ADMIN
     }
     
     // Constructors

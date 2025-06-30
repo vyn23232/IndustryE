@@ -8,7 +8,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.industryE.ecommerce.entity.Product;
-import com.industryE.ecommerce.entity.User;
 import com.industryE.ecommerce.repository.ProductRepository;
 import com.industryE.ecommerce.repository.UserRepository;
 import com.industryE.ecommerce.service.ProductSizeInventoryService;
@@ -28,13 +27,6 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Initialize test users with plain text passwords
-        if (userRepository.count() == 0) {
-            User testUser = new User("Test User", "test@example.com", "password123");
-            User adminUser = new User("Admin User", "admin@example.com", "admin123");
-            
-            userRepository.saveAll(Arrays.asList(testUser, adminUser));
-            System.out.println("Test users created with plain text passwords");
-        }
         
         // Only populate products if the database is empty
         if (productRepository.count() == 0) {
@@ -133,7 +125,7 @@ public class DataInitializer implements CommandLineRunner {
             
             // Initialize size inventories for all products with limited stock (3 per size)
             List<String> standardSizes = Arrays.asList("7", "7.5", "8", "8.5", "9", "9.5", "10", "10.5", "11", "11.5", "12");
-            int defaultQuantityPerSize = 5; // Limited inventory - 3 stocks per size
+            int defaultQuantityPerSize = 1; // Limited inventory - 3 stocks per size
             
             for (Product product : sampleProducts) {
                 sizeInventoryService.initializeInventoryForProduct(product.getId(), standardSizes, defaultQuantityPerSize);

@@ -77,16 +77,15 @@ public class CartService {
                 cart.getId(), product.getId(), request.getSize());
 
         if (existingItem.isPresent()) {
-            // Update quantity
+            // Always set the quantity to the requested value (replace, do not add)
             CartItem item = existingItem.get();
-            int newQuantity = item.getQuantity() + request.getQuantity();
+            int newQuantity = request.getQuantity();
 
             // Check if new quantity is available
             if (!sizeInventoryService.checkAvailability(request.getProductId(), request.getSize(), newQuantity)) {
-                throw new RuntimeException("Cannot add " + request.getQuantity() + " more items. Only " +
-                        (sizeInventoryService.getSizeInventory(request.getProductId(), request.getSize())
-                                .getAvailableQuantity() - item.getQuantity())
-                        +
+                throw new RuntimeException("Cannot set quantity to " + newQuantity + ". Only " +
+                        sizeInventoryService.getSizeInventory(request.getProductId(), request.getSize())
+                                .getAvailableQuantity() +
                         " available in size " + request.getSize());
             }
 

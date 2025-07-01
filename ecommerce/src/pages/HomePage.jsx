@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import '../css/HomePage.css'
+import CategoryCard from '../components/CategoryCard'
 
 const HomePage = ({ setCurrentPage }) => {
   // Since we're only selling shoes, redirect to shoes page
@@ -90,17 +91,7 @@ const HomePage = ({ setCurrentPage }) => {
           </div>
           <div className="categories-grid">
             {categories.map((category, index) => (
-              <div key={category.id} className="category-card" style={{'--accent-color': category.color}}>
-                <div className="category-icon">{category.icon}</div>
-                <h3 className="category-name">{category.name}</h3>
-                <button 
-                  className="category-btn"
-                  onClick={() => handleCategoryClick(category.id)}
-                >
-                  Explore
-                </button>
-                <div className="wishlist-btn">♡</div>
-              </div>
+              <CategoryCard key={category.id} category={category} onClick={handleCategoryClick} />
             ))}
           </div>
         </div>

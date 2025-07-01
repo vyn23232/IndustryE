@@ -1,6 +1,8 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import '../css/LandingPage.css'
+import FeatureCard from '../components/FeatureCard'
+import TestimonialCard from '../components/TestimonialCard'
 
 const LandingPage = () => {
   const navigate = useNavigate()
@@ -121,11 +123,7 @@ const LandingPage = () => {
           </div>
           <div className="features-grid">
             {features.map((feature, index) => (
-              <div key={index} className="feature-card">
-                <div className="feature-icon">{feature.icon}</div>
-                <h3>{feature.title}</h3>
-                <p>{feature.description}</p>
-              </div>
+              <FeatureCard key={index} feature={feature} />
             ))}
           </div>
         </div>
@@ -140,16 +138,7 @@ const LandingPage = () => {
           </div>
           <div className="testimonials-grid">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="testimonial-card">
-                <div className="testimonial-rating">
-                  {'⭐'.repeat(testimonial.rating)}
-                </div>
-                <p className="testimonial-comment">"{testimonial.comment}"</p>
-                <div className="testimonial-author">
-                  <span className="author-avatar">{testimonial.avatar}</span>
-                  <span className="author-name">{testimonial.name}</span>
-                </div>
-              </div>
+              <TestimonialCard key={index} testimonial={testimonial} />
             ))}
           </div>
         </div>

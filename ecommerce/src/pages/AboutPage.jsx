@@ -36,10 +36,9 @@ const AboutPage = () => {
   ]
 
   const team = [
-    { name: 'Robert Miller', role: 'Founder & CEO', emoji: '👨‍💼' },
-    { name: 'Emma Watson', role: 'Head of Design', emoji: '👩‍🎨' },
-    { name: 'John Garcia', role: 'Customer Experience', emoji: '👨‍💻' },
-    { name: 'Lisa Chen', role: 'Supply Chain Manager', emoji: '👩‍🔧' }
+    { name: 'Jhovynn Aldrich Apurado', role: 'Founder & CEO', emoji: '👨‍💼' },
+    { name: 'Mark Christian Garing', role: 'Head of Design', emoji: '👩‍🎨' },
+    { name: 'Josef Cajes', role: 'Customer Experience', emoji: '👨‍💻' },
   ]
 
   return (

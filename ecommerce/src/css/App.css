@@ -7,7 +7,7 @@
 
 .main-content {
   flex: 1;
-  margin-left: 280px;
+  margin-left: 231px;
   min-height: 100vh;
   width: calc(100% - 280px);
   transition: all 0.3s ease;

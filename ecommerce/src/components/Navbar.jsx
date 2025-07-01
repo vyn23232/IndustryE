@@ -62,7 +62,6 @@ const Navbar = ({ cartItemCount, isAuthenticated, user, onLogout }) => {
                 to="/"
                 className={`nav-link ${currentPath === '/' ? 'active' : ''}`}
               >
-                <span className="nav-icon">🏠</span>
                 <span className="nav-label">Home</span>
               </Link>
             </>
@@ -72,7 +71,6 @@ const Navbar = ({ cartItemCount, isAuthenticated, user, onLogout }) => {
             to="/shoes"
             className={`nav-link ${currentPath === '/shoes' ? 'active' : ''}`}
           >
-            <span className="nav-icon">👟</span>
             <span className="nav-label">Shoes</span>
           </Link>
 
@@ -80,7 +78,6 @@ const Navbar = ({ cartItemCount, isAuthenticated, user, onLogout }) => {
             to="/about"
             className={`nav-link ${currentPath === '/about' ? 'active' : ''}`}
           >
-            <span className="nav-icon">ℹ️</span>
             <span className="nav-label">About Us</span>
           </Link>
 
@@ -91,14 +88,12 @@ const Navbar = ({ cartItemCount, isAuthenticated, user, onLogout }) => {
                 to="/login"
                 className={`nav-link ${currentPath === '/login' ? 'active' : ''}`}
               >
-                <span className="nav-icon">🔑</span>
                 <span className="nav-label">Login</span>
               </Link>
               <Link
                 to="/signup"
                 className={`nav-link ${currentPath === '/signup' ? 'active' : ''}`}
               >
-                <span className="nav-icon">📝</span>
                 <span className="nav-label">Sign Up</span>
               </Link>
             </>
@@ -108,14 +103,12 @@ const Navbar = ({ cartItemCount, isAuthenticated, user, onLogout }) => {
                 className={`nav-link ${currentPath === '/profile' ? 'active' : ''}`}
                 onClick={handleProfileClick}
               >
-                <span className="nav-icon">👤</span>
                 <span className="nav-label">Profile</span>
               </button>
               <Link
                 to="/orders"
                 className={`nav-link ${currentPath === '/orders' ? 'active' : ''}`}
               >
-                <span className="nav-icon">📦</span>
                 <span className="nav-label">My Orders</span>
               </Link>
               
@@ -123,7 +116,6 @@ const Navbar = ({ cartItemCount, isAuthenticated, user, onLogout }) => {
                 className="nav-link"
                 onClick={onLogout}
               >
-                <span className="nav-icon">🚪</span>
                 <span className="nav-label">Logout</span>
               </button>
             </>

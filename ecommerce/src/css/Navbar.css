@@ -182,6 +182,7 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-align: left; /* Changed from center to left */
+  margin-left: 45px;
 }
 
 /* Navigation Links */

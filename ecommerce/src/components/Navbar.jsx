@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import logo from '../assets/images/logo2.png'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import '../css/Navbar.css'
 
@@ -35,8 +36,9 @@ const Navbar = ({ cartItemCount, isAuthenticated, user, onLogout }) => {
     <nav className="vertical-navbar">
       <div className="nav-container">
         {/* Brand Section */}
+
         <div className="nav-brand" onClick={handleBrandClick}>
-          <div className="brand-icon">🛍️</div>
+          <img src={logo} alt="ShoeStop Logo" className="brand-icon" style={{ width: '100px', height: '100px', objectFit: 'contain', marginLeft: '45px' }} />
           <div className="brand-text">ShoeStop</div>
         </div>
 

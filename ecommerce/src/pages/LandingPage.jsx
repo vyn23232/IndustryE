@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import '../css/LandingPage.css'
 import FeatureCard from '../components/FeatureCard'
 import TestimonialCard from '../components/TestimonialCard'
+import landingImage from '../assets/images/landingimage.jpg'
 
 const LandingPage = () => {
   const navigate = useNavigate()
@@ -93,22 +94,33 @@ const LandingPage = () => {
                 </div>
               </div>
             </div>
-            <div className="hero-image">
-              <div className="product-showcase">
-                <div className="main-shoe" style={{fontSize: '150px'}}>👟</div>
-                <div className="floating-elements">
-                  <div className="floating-item" style={{top: '10%', right: '15%'}}>👞</div>
-                  <div className="floating-item" style={{top: '70%', left: '5%'}}>👟</div>
-                  <div className="floating-item" style={{bottom: '20%', right: '35%'}}>👢</div>
-                  <div className="floating-item" style={{top: '40%', left: '20%'}}>👠</div>
-                </div>
-              </div>
-              <div className="discount-badge">
-                <div className="discount-text">
-                  <span>Up to 50% OFF</span>
-                  <small>On your first purchase</small>
-                </div>
-              </div>
+            <div className="hero-image" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img 
+                src={landingImage} 
+                alt="ShoeStop Hero" 
+                style={{ 
+                  width: '420px', 
+                  height: 'auto', 
+                  borderRadius: '32px', 
+                  boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+                  objectFit: 'cover',
+                  border: '4px solid #fff',
+                  background: '#fff',
+                  zIndex: 1
+                }}
+              />
+              {/* Decorative gradient circle */}
+              <div style={{
+                position: 'absolute',
+                left: '-60px',
+                top: '40%',
+                width: '180px',
+                height: '180px',
+                background: 'radial-gradient(circle at 60% 40%, #ff6b35 0%, #f7931e 80%, transparent 100%)',
+                borderRadius: '50%',
+                opacity: 0.18,
+                zIndex: 0
+              }} />
             </div>
           </div>
         </div>

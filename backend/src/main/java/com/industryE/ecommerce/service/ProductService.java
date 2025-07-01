@@ -5,10 +5,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.industryE.ecommerce.dto.ProductDTO;
 import com.industryE.ecommerce.entity.Product;
 import com.industryE.ecommerce.repository.ProductRepository;
+import com.industryE.ecommerce.repository.ProductSizeInventoryRepository;
 
 @Service
 public class ProductService {
@@ -18,6 +20,9 @@ public class ProductService {
     
     @Autowired
     private ProductSizeInventoryService sizeInventoryService;
+    
+    @Autowired
+    private ProductSizeInventoryRepository sizeInventoryRepository;
 
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll().stream()
@@ -60,14 +65,36 @@ public class ProductService {
         existingProduct.setAvailableSizes(productDTO.getAvailableSizes());
         existingProduct.setInStock(productDTO.getInStock());
         
+        // Update image and other fields if provided (preserve existing values if not provided)
+        if (productDTO.getImage() != null && !productDTO.getImage().trim().isEmpty()) {
+            existingProduct.setImage(productDTO.getImage());
+        }
+        // If image is null or empty, keep the existing image
+        
+        if (productDTO.getColor() != null && !productDTO.getColor().trim().isEmpty()) {
+            existingProduct.setColor(productDTO.getColor());
+        }
+        if (productDTO.getBrand() != null && !productDTO.getBrand().trim().isEmpty()) {
+            existingProduct.setBrand(productDTO.getBrand());
+        }
+        if (productDTO.getRating() != null) {
+            existingProduct.setRating(productDTO.getRating());
+        }
+        
         Product updatedProduct = productRepository.save(existingProduct);
         return convertToDTO(updatedProduct);
     }
 
+    @Transactional
     public void deleteProduct(Long id) {
         if (!productRepository.existsById(id)) {
             throw new RuntimeException("Product not found with id: " + id);
         }
+        
+        // First delete all related size inventory records
+        sizeInventoryRepository.deleteByProductId(id);
+        
+        // Then delete the product
         productRepository.deleteById(id);
     }
 

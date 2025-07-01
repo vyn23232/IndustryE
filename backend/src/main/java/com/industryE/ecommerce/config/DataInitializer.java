@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.industryE.ecommerce.entity.Product;
+import com.industryE.ecommerce.entity.User;
 import com.industryE.ecommerce.repository.ProductRepository;
 import com.industryE.ecommerce.repository.UserRepository;
 import com.industryE.ecommerce.service.ProductSizeInventoryService;
@@ -26,7 +27,8 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Initialize test users with plain text passwords
+        // Create admin user if not exists
+        createAdminUser();
         
         // Only populate products if the database is empty
         if (productRepository.count() == 0) {
@@ -132,6 +134,27 @@ public class DataInitializer implements CommandLineRunner {
             }
             
             System.out.println("Sample products and size inventories created successfully");
+        }
+    }
+    
+    private void createAdminUser() {
+        // Check if admin user already exists
+        if (userRepository.findByEmail("admin@shoestop.com").isEmpty()) {
+            User adminUser = new User();
+            adminUser.setName("Administrator");
+            adminUser.setEmail("admin@shoestop.com");
+            adminUser.setPassword("admin123"); // Store as plain text to match AuthService logic
+            adminUser.setRole(User.Role.ADMIN);
+            adminUser.setPhone("+1234567890");
+            adminUser.setLocation("Admin Office");
+            adminUser.setBio("System Administrator");
+            
+            userRepository.save(adminUser);
+            System.out.println("Admin user created successfully");
+            System.out.println("Email: admin@shoestop.com");
+            System.out.println("Password: admin123");
+        } else {
+            System.out.println("Admin user already exists");
         }
     }
 }

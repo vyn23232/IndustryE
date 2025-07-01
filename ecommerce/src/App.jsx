@@ -16,6 +16,7 @@ import OrderConfirmationPage from './pages/OrderConfirmationPage'
 import OrderHistoryPage from './pages/OrderHistoryPage'
 import SearchPage from './pages/SearchPage'
 import DetailsShoesPage from './pages/DetailsShoesPage'
+import AdminApp from './components/AdminApp'
 import { localShoesData } from './data/shoesData'
 
 // API base URL
@@ -371,15 +372,21 @@ function AppContent() {
     }
   }
 
+  // Check if current route is an admin route
+  const isAdminRoute = location.pathname.startsWith('/admin')
+
   return (
     <div className="app">
-      <Navbar 
-        cartItemCount={cartItemCount}
-        isAuthenticated={isAuthenticated}
-        user={user}
-        onLogout={handleLogout}
-      />
-      <main className="main-content">
+      {/* Only show Navbar for non-admin routes */}
+      {!isAdminRoute && (
+        <Navbar 
+          cartItemCount={cartItemCount}
+          isAuthenticated={isAuthenticated}
+          user={user}
+          onLogout={handleLogout}
+        />
+      )}
+      <main className={`main-content ${isAdminRoute ? 'admin-content' : ''}`}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={
@@ -423,6 +430,9 @@ function AppContent() {
           <Route path="/order-confirmation" element={
             <OrderConfirmationPage orderDetails={orderDetails} />
           } />
+          
+          {/* Admin Routes */}
+          <Route path="/admin/*" element={<AdminApp />} />
           
           {/* Redirect any unknown routes */}
           <Route path="*" element={<Navigate to="/" />} />

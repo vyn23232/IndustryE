@@ -1,5 +1,6 @@
 package com.industryE.ecommerce.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +24,19 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     
     // Find orders by user ID only
     List<Order> findByUserId(Long userId);
+    
+    // Admin methods
+    List<Order> findByStatus(String status);
+    
+    @Query("SELECT o FROM Order o ORDER BY o.orderDate DESC")
+    List<Order> findAllOrderByOrderDateDesc();
+    
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status = :status")
+    Long countByStatus(@Param("status") String status);
+    
+    @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.paymentStatus = 'PAID'")
+    BigDecimal getTotalRevenue();
+    
+    @Query("SELECT o FROM Order o ORDER BY o.orderDate DESC LIMIT 10")
+    List<Order> findTop10RecentOrders();
 }

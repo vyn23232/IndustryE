@@ -69,7 +69,13 @@ const LoginPage = ({ onLogin }) => {
       const data = await response.json()
       
       if (response.ok) {
-        // Remove admin role check - allow all users to login normally
+        // Check if user is admin - block admin from customer login
+        if (data.user && data.user.role === 'ADMIN') {
+          setErrors({ general: 'Admin accounts cannot login here. Please use the admin portal.' })
+          return
+        }
+        
+        // Allow only regular users to login to customer interface
         localStorage.setItem('user', JSON.stringify(data.user))
         localStorage.setItem('token', data.token)
         onLogin(data.user)
@@ -138,6 +144,7 @@ const LoginPage = ({ onLogin }) => {
                 Sign up for ShoeStop
               </Link>
             </p>
+
           </div>
         </div>
 

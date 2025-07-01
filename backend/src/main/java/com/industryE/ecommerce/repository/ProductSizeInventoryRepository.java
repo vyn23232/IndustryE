@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.industryE.ecommerce.entity.ProductSizeInventory;
 
@@ -29,5 +31,7 @@ public interface ProductSizeInventoryRepository extends JpaRepository<ProductSiz
     @Query("SELECT COUNT(psi) > 0 FROM ProductSizeInventory psi WHERE psi.product.id = :productId AND (psi.quantity - psi.reservedQuantity) > 0")
     boolean hasAvailableInventory(@Param("productId") Long productId);
     
+    @Modifying
+    @Transactional
     void deleteByProductId(Long productId);
 }

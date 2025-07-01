@@ -1,0 +1,163 @@
+.admin-login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.admin-login-paper {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 20px !important;
+  padding: 3rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+  max-width: 450px;
+  width: 100%;
+}
+
+.admin-login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.admin-brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-brand-icon {
+  font-size: 3rem !important;
+  color: #667eea;
+}
+
+.admin-brand-name {
+  font-weight: 700 !important;
+  color: #2d3748;
+}
+
+.admin-login-title {
+  font-weight: 600 !important;
+  color: #2d3748;
+  margin-bottom: 0.5rem !important;
+}
+
+.admin-login-subtitle {
+  color: #718096;
+  margin-bottom: 0 !important;
+}
+
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.admin-login-field .MuiOutlinedInput-root {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.admin-login-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #667eea;
+}
+
+.admin-login-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #667eea;
+}
+
+.admin-login-field .MuiInputLabel-root.Mui-focused {
+  color: #667eea;
+}
+
+.admin-login-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border-radius: 12px !important;
+  padding: 1rem !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  font-size: 1.1rem !important;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.admin-login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4) !important;
+}
+
+.admin-login-button:disabled {
+  background: linear-gradient(135deg, #a0aec0 0%, #cbd5e0 100%) !important;
+  transform: none;
+  box-shadow: none !important;
+}
+
+.admin-login-alert {
+  border-radius: 12px !important;
+  background: rgba(254, 226, 226, 0.9) !important;
+}
+
+.admin-login-demo {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.admin-login-demo .MuiTypography-root {
+  color: #a0aec0 !important;
+  font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .admin-login-container {
+    padding: 1rem;
+  }
+  
+  .admin-login-paper {
+    padding: 2rem;
+  }
+  
+  .admin-brand-name {
+    font-size: 1.8rem !important;
+  }
+  
+  .admin-login-title {
+    font-size: 1.3rem !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .admin-login-paper {
+    background: rgba(45, 55, 72, 0.95) !important;
+    color: white;
+  }
+  
+  .admin-brand-name,
+  .admin-login-title {
+    color: white !important;
+  }
+  
+  .admin-login-subtitle {
+    color: #a0aec0 !important;
+  }
+  
+  .admin-login-field .MuiOutlinedInput-root {
+    background: rgba(74, 85, 104, 0.8);
+    color: white;
+  }
+  
+  .admin-login-field .MuiInputLabel-root {
+    color: #a0aec0 !important;
+  }
+  
+  .admin-login-field .MuiOutlinedInput-notchedOutline {
+    border-color: #4a5568 !important;
+  }
+}

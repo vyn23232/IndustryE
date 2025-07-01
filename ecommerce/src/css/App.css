@@ -15,11 +15,22 @@
   position: relative;
 }
 
+/* Admin routes should take full width without navbar */
+.main-content.admin-content {
+  margin-left: 0;
+  width: 100%;
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
   .main-content {
     margin-left: 80px;
     width: calc(100% - 80px);
+  }
+  
+  .main-content.admin-content {
+    margin-left: 0;
+    width: 100%;
   }
 }
 

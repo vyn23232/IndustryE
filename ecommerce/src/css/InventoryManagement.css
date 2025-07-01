@@ -1,0 +1,229 @@
+.inventory-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.inventory-appbar {
+  background-color: #000000 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.inventory-header {
+  margin-bottom: 32px;
+}
+
+.inventory-title {
+  color: #000000 !important;
+  font-weight: 800 !important;
+  font-size: 2rem !important;
+  margin-bottom: 8px !important;
+}
+
+.inventory-content {
+  padding: 32px 24px !important;
+}
+
+.inventory-stats {
+  margin-bottom: 32px !important;
+}
+
+.stat-card {
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease !important;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.stat-icon {
+  font-size: 32px !important;
+  color: #000000;
+}
+
+.stat-icon.warning {
+  color: #ff6900;
+}
+
+.inventory-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+
+.search-filter-section {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.search-field {
+  min-width: 400px;
+  flex: 1;
+}
+
+.search-field .MuiOutlinedInput-root {
+  border-radius: 12px;
+}
+
+.filter-button {
+  border-radius: 12px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  padding: 10px 20px !important;
+  border: 2px solid #e0e0e0 !important;
+  color: #666666 !important;
+}
+
+.add-button {
+  border-radius: 12px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  padding: 10px 24px !important;
+  background-color: #000000 !important;
+  white-space: nowrap;
+  height: 48px;
+}
+
+.add-button:hover {
+  background-color: #333333 !important;
+}
+
+.inventory-tabs {
+  margin-bottom: 24px;
+}
+
+.inventory-tabs .MuiTab-root {
+  text-transform: none !important;
+  font-weight: 600 !important;
+  color: #666666 !important;
+}
+
+.inventory-tabs .Mui-selected {
+  color: #000000 !important;
+}
+
+.inventory-table-card {
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #f0f0f0;
+}
+
+.inventory-table-card .MuiTableHead-root {
+  background-color: #f8f9fa;
+}
+
+.inventory-table-card .MuiTableHead-root .MuiTableCell-root {
+  font-weight: 700 !important;
+  color: #000000;
+  border-bottom: 2px solid #e0e0e0;
+  padding: 20px 16px;
+}
+
+.product-row:hover {
+  background-color: #f8f9fa;
+}
+
+.product-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.product-image {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 8px !important;
+}
+
+.sku-text {
+  font-family: "Monaco", "Menlo", monospace !important;
+  background-color: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px !important;
+}
+
+.action-button {
+  color: #666666 !important;
+  transition: all 0.2s ease !important;
+}
+
+.action-button:hover {
+  color: #000000 !important;
+}
+
+.action-button.delete:hover {
+  color: #d32f2f !important;
+}
+
+.dialog-title {
+  font-weight: 700 !important;
+  color: #000000;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.dialog-content {
+  padding: 24px !important;
+}
+
+.dialog-actions {
+  padding: 16px 24px !important;
+  border-top: 1px solid #e0e0e0;
+}
+
+.dialog-actions .MuiButton-outlined {
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  border: 2px solid #e0e0e0 !important;
+  color: #666666 !important;
+}
+
+.dialog-actions .MuiButton-contained {
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  background-color: #000000 !important;
+}
+
+.dialog-actions .MuiButton-contained:hover {
+  background-color: #333333 !important;
+}
+
+@media (max-width: 768px) {
+  .inventory-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-filter-section {
+    flex-direction: column;
+  }
+
+  .search-field {
+    min-width: auto;
+  }
+
+  .add-button {
+    width: 100%;
+  }
+
+  .product-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

@@ -105,7 +105,9 @@ export const mapProductWithImages = (backendProduct) => {
       ? JSON.parse(backendProduct.availableSizes) 
       : backendProduct.availableSizes || ['7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12'],
     // Ensure inStock is always a boolean
-    inStock: backendProduct.inStock !== false
+    inStock: backendProduct.inStock !== false,
+    // Keep original image field for reference
+    originalImageKey: imageKey
   }
 }
 

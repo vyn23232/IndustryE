@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import AdminLoginPage from '../pages/AdminLoginPage'
+import AccessDenied from './AccessDenied'
 
 import DashboardPage from '../pages/DashboardPage'
 import AdminInventoryPage from '../pages/AdminInventoryPage'
 import AdminOrdersPage from '../pages/AdminOrdersPage'
 
-const AdminApp = () => {
+const AdminApp = ({ isAuthenticated, user }) => {
   const navigate = useNavigate()
   const [adminUser, setAdminUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -71,12 +72,26 @@ const AdminApp = () => {
     <Routes>
       <Route 
         path="/login" 
-        element={<AdminLoginPage onLogin={handleAdminLogin} />} 
+        element={
+          // If a regular user is logged in, show access denied page
+          isAuthenticated && user && user.role !== 'ADMIN' ? 
+          <AccessDenied 
+            user={user} 
+            message="You cannot access the admin panel while logged in as a regular user." 
+          /> :
+          <AdminLoginPage onLogin={handleAdminLogin} />
+        } 
       />
       <Route 
         path="/dashboard" 
         element={
-          adminUser && adminUser.role === 'ADMIN' ? (
+          // Check if regular user is trying to access admin dashboard
+          isAuthenticated && user && user.role !== 'ADMIN' ? (
+            <AccessDenied 
+              user={user} 
+              message="You cannot access the admin dashboard while logged in as a regular user." 
+            />
+          ) : adminUser && adminUser.role === 'ADMIN' ? (
             <DashboardPage
               adminUser={adminUser}
               onNavigate={handleNavigate}
@@ -93,7 +108,13 @@ const AdminApp = () => {
       <Route 
         path="/inventory" 
         element={
-          adminUser && adminUser.role === 'ADMIN' ? (
+          // Check if regular user is trying to access admin inventory
+          isAuthenticated && user && user.role !== 'ADMIN' ? (
+            <AccessDenied 
+              user={user} 
+              message="You cannot access the admin inventory while logged in as a regular user." 
+            />
+          ) : adminUser && adminUser.role === 'ADMIN' ? (
             <AdminInventoryPage
               adminUser={adminUser}
               onNavigate={handleNavigate}
@@ -107,7 +128,13 @@ const AdminApp = () => {
       <Route 
         path="/orders" 
         element={
-          adminUser && adminUser.role === 'ADMIN' ? (
+          // Check if regular user is trying to access admin orders
+          isAuthenticated && user && user.role !== 'ADMIN' ? (
+            <AccessDenied 
+              user={user} 
+              message="You cannot access the admin orders while logged in as a regular user." 
+            />
+          ) : adminUser && adminUser.role === 'ADMIN' ? (
             <AdminOrdersPage
               adminUser={adminUser}
               onNavigate={handleNavigate}
@@ -118,8 +145,22 @@ const AdminApp = () => {
           )
         }
       />
-      <Route path="/" element={<Navigate to="/admin/login" replace />} />
-      <Route path="*" element={<Navigate to="/admin/login" replace />} />
+      <Route path="/" element={
+        isAuthenticated && user && user.role !== 'ADMIN' ? 
+        <AccessDenied 
+          user={user} 
+          message="You cannot access the admin panel while logged in as a regular user." 
+        /> :
+        <Navigate to="/admin/login" replace />
+      } />
+      <Route path="*" element={
+        isAuthenticated && user && user.role !== 'ADMIN' ? 
+        <AccessDenied 
+          user={user} 
+          message="You cannot access the admin panel while logged in as a regular user." 
+        /> :
+        <Navigate to="/admin/login" replace />
+      } />
     </Routes>
   )
 }

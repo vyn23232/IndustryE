@@ -432,7 +432,7 @@ function AppContent() {
           } />
           
           {/* Admin Routes */}
-          <Route path="/admin/*" element={<AdminApp />} />
+          <Route path="/admin/*" element={<AdminApp isAuthenticated={isAuthenticated} user={user} />} />
           
           {/* Redirect any unknown routes */}
           <Route path="*" element={<Navigate to="/" />} />

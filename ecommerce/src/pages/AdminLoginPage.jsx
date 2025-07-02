@@ -72,22 +72,32 @@ export default function AdminLoginPage({ onLogin }) {
   return (
     <div className="admin-login-container">
       <Container maxWidth="sm">
-        <Paper elevation={0} className="admin-login-paper">
+        <Paper 
+          elevation={0} 
+          className="admin-login-paper"
+        >
           <Box className="admin-login-header">
-            <Typography variant="h4" component="h1" className="admin-brand-name">
+            <Typography 
+              variant="h4" 
+              component="h1" 
+              className="admin-brand-name"
+            >
               ADMIN
             </Typography>
-            <Typography variant="h5" className="admin-login-title">
+            <Typography 
+              variant="h6" 
+              className="admin-login-title"
+            >
               Admin Portal
-            </Typography>
-            <Typography variant="body1" className="admin-login-subtitle">
-              Inventory Management System
             </Typography>
           </Box>
 
           <form onSubmit={handleSubmit} className="admin-login-form">
             {error && (
-              <Alert severity="error" className="admin-login-alert">
+              <Alert 
+                severity="error" 
+                className="admin-login-alert"
+              >
                 {error}
               </Alert>
             )}
@@ -117,7 +127,11 @@ export default function AdminLoginPage({ onLogin }) {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <IconButton 
+                      onClick={() => setShowPassword(!showPassword)} 
+                      edge="end"
+                      size="small"
+                    >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
@@ -136,12 +150,6 @@ export default function AdminLoginPage({ onLogin }) {
               {loading ? "Signing In..." : "Sign In"}
             </Button>
           </form>
-
-          <Box className="admin-login-demo">
-            <Typography variant="caption" color="textSecondary">
-              Demo: Create an admin account or contact administrator
-            </Typography>
-          </Box>
         </Paper>
       </Container>
     </div>

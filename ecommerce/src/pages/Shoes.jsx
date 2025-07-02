@@ -245,12 +245,6 @@ const Shoes = ({ addToCart, isAuthenticated, user }) => {
                         <img 
                           src={shoe.image} 
                           alt={shoe.name}
-                          style={{
-                            width: '80px', 
-                            height: '80px', 
-                            objectFit: 'contain',
-                            borderRadius: '8px'
-                          }}
                         />
                       </div>
                       <div className="product-info">

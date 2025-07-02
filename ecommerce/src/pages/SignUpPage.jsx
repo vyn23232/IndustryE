@@ -189,7 +189,7 @@ const SignUpPage = ({ setToast }) => {
           <div className="auth-footer">
             <p>Already have an account? 
               <Link to="/login" className="link-btn">
-                Sign in to ShoeStop
+                Sign in
               </Link>
             </p>
           </div>

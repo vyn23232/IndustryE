@@ -77,14 +77,12 @@ export default function OrderDetailsDialog({ open, onClose, order }) {
   }
 
   const getShippingAddress = () => {
+    // Only return address fields, not email
     if (order.shippingInfo) {
-      const parts = [
-        order.shippingInfo.address,
-        order.shippingInfo.city,
-        order.shippingInfo.province,
-        order.shippingInfo.postalCode
-      ].filter(Boolean)
-      return parts.join(', ') || 'N/A'
+      // Remove email if present in shippingInfo
+      const { address, city, province, postalCode } = order.shippingInfo
+      const parts = [address, city, province, postalCode].filter(Boolean)
+      return parts.length > 0 ? parts.join(', ') : 'N/A'
     }
     return order.shippingAddress || 'N/A'
   }
@@ -112,16 +110,6 @@ export default function OrderDetailsDialog({ open, onClose, order }) {
                     {getCustomerName()}
                   </Typography>
                 </Box>
-                {order.email && (
-                  <Box className="detail-row">
-                    <Typography variant="body2" color="textSecondary">
-                      Email:
-                    </Typography>
-                    <Typography variant="body2">
-                      {order.email}
-                    </Typography>
-                  </Box>
-                )}
                 {(order.phone || order.shippingInfo?.phone) && (
                   <Box className="detail-row">
                     <Typography variant="body2" color="textSecondary">
@@ -179,20 +167,14 @@ export default function OrderDetailsDialog({ open, onClose, order }) {
                     {order.paymentMethod || 'N/A'}
                   </Typography>
                 </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Shipping Address */}
-          <Grid item xs={12}>
-            <Card className="detail-card">
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Shipping Address
-                </Typography>
-                <Typography variant="body2">
-                  {getShippingAddress()}
-                </Typography>
+                <Box className="detail-row">
+                  <Typography variant="body2" color="textSecondary">
+                    Shipping Address:
+                  </Typography>
+                  <Typography variant="body2">
+                    {getShippingAddress()}
+                  </Typography>
+                </Box>
               </CardContent>
             </Card>
           </Grid>
@@ -207,13 +189,33 @@ export default function OrderDetailsDialog({ open, onClose, order }) {
                 {order.orderItems && order.orderItems.length > 0 ? (
                   order.orderItems.map((item, index) => (
                     <Box key={index}>
-                      <Box className="product-detail">
-                        <Avatar 
-                          src={item.productImage || "/placeholder.svg?height=80&width=80"} 
-                          variant="rounded" 
-                          className="product-image"
-                          sx={{ width: 80, height: 80 }}
-                        />
+                      <Card className="detail-card" sx={{ mb: 3, p: 3 }}>
+                        <Box
+                          sx={{
+                            width: "100%",
+                            maxWidth: 400,
+                            margin: "0 auto 24px auto",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: 3,
+                            overflow: "hidden",
+                            background: "#fff",
+                          }}
+                        >
+                          <img
+                            src={item.productImage}
+                            alt={item.productName}
+                            style={{
+                              width: "100%",
+                              height: 300,
+                              objectFit: "cover",
+                              display: "block",
+                              borderRadius: 12,
+                              background: "#fff",
+                            }}
+                          />
+                        </Box>
                         <Box className="product-info" sx={{ flex: 1, ml: 2 }}>
                           <Typography variant="subtitle2" fontWeight={600}>
                             {item.productName}
@@ -230,10 +232,7 @@ export default function OrderDetailsDialog({ open, onClose, order }) {
                             {formatCurrency(item.unitPrice)} each
                           </Typography>
                         </Box>
-                        <Typography variant="subtitle2" fontWeight={600}>
-                          {formatCurrency(item.totalPrice)}
-                        </Typography>
-                      </Box>
+                      </Card>
                       {index < order.orderItems.length - 1 && <Divider sx={{ my: 2 }} />}
                     </Box>
                   ))

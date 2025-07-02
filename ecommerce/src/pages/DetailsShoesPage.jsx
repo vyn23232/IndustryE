@@ -1,8 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { mapProductWithImages } from '../utils/imageMapper'
 import axios from 'axios'
 import '../css/DetailsShoesPage.css'
+// Add MUI and zoom dependencies
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import CloseIcon from '@mui/icons-material/Close'
+import ZoomInIcon from '@mui/icons-material/ZoomIn'
+import ZoomOutIcon from '@mui/icons-material/ZoomOut'
+import RotateLeftIcon from '@mui/icons-material/RotateLeft'
+import RotateRightIcon from '@mui/icons-material/RotateRight'
+import CircularProgress from '@mui/material/CircularProgress'
 
 const DetailsShoesPage = ({ addToCart, isAuthenticated }) => {
   const { id } = useParams()
@@ -17,6 +30,11 @@ const DetailsShoesPage = ({ addToCart, isAuthenticated }) => {
   const [sizeInventory, setSizeInventory] = useState([])
   const [alertMessage, setAlertMessage] = useState('')
   const [alertType, setAlertType] = useState('') // 'error', 'warning', 'success'
+  const [modalOpen, setModalOpen] = useState(false)
+  const [zoom, setZoom] = useState(1)
+  const [rotation, setRotation] = useState(0)
+
+  const autoSlideRef = useRef()
 
   // Available sizes for shoes
   const availableSizes = [
@@ -26,6 +44,23 @@ const DetailsShoesPage = ({ addToCart, isAuthenticated }) => {
   useEffect(() => {
     fetchShoeDetails()
   }, [id])
+
+  // Auto-slide effect for image gallery
+  useEffect(() => {
+    // Stop auto-slide when modal is open
+    if (!shoe || !shoe.images || shoe.images.length <= 1 || modalOpen) {
+      clearInterval(autoSlideRef.current)
+      return
+    }
+
+    autoSlideRef.current = setInterval(() => {
+      setSelectedImageIndex(prev =>
+        prev + 1 < shoe.images.length ? prev + 1 : 0
+      )
+    }, 3500) // Change image every 3.5 seconds
+
+    return () => clearInterval(autoSlideRef.current)
+  }, [shoe, shoe?.images?.length, modalOpen])
 
   const fetchShoeDetails = async () => {
     try {
@@ -77,15 +112,13 @@ const DetailsShoesPage = ({ addToCart, isAuthenticated }) => {
       return
     }
 
-    // Check size availability
+    // Check size availability (latest from backend)
     const sizeInfo = sizeInventory.find(inv => inv.size === selectedSize)
-    if (sizeInfo && sizeInfo.availableQuantity < quantity) {
-      setAlertMessage(`Only ${sizeInfo.availableQuantity} items available in size ${selectedSize}. ${sizeInfo.availableQuantity === 0 ? 'Out of stock!' : 'Please reduce quantity.'}`)
+    if (!sizeInfo || sizeInfo.availableQuantity < quantity) {
+      setAlertMessage(
+        `Sorry, size ${selectedSize} is out of stock. Please select another size.`
+      )
       setAlertType('error')
-      setTimeout(() => {
-        setAlertMessage('')
-        setAlertType('')
-      }, 3000)
       return
     }
 
@@ -135,12 +168,50 @@ const DetailsShoesPage = ({ addToCart, isAuthenticated }) => {
     return getSizeAvailability(size) > 0
   }
 
-  if (loading) {
+  // Reset zoom and rotation when modal closes
+  useEffect(() => {
+    if (!modalOpen) {
+      setZoom(1)
+      setRotation(0)
+    }
+  }, [modalOpen])
+
+  // Show MUI loading spinner for at least 1.5 seconds
+  const [showLoading, setShowLoading] = useState(true)
+  useEffect(() => {
+    if (loading) {
+      setShowLoading(true)
+      const timer = setTimeout(() => setShowLoading(false), 1500)
+      return () => clearTimeout(timer)
+    } else {
+      setShowLoading(false)
+    }
+  }, [loading])
+
+  if (loading || showLoading) {
     return (
       <div className="details-page loading">
         <div className="container">
-          <div className="loading-spinner">
-            <p>Loading shoe details...</p>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60vh',
+              gap: 24,
+            }}
+          >
+            <CircularProgress size={64} thickness={5} sx={{ color: '#ff6b35' }} />
+            <p
+              style={{
+                color: '#b3b3b3',
+                fontSize: '1.2rem',
+                margin: 0,
+              }}
+            >
+              Loading shoe details...
+            </p>
           </div>
         </div>
       </div>
@@ -178,10 +249,16 @@ const DetailsShoesPage = ({ addToCart, isAuthenticated }) => {
         <div className="product-details">
           {/* Image Gallery */}
           <div className="image-gallery">
-            <div className="main-image">
+            <div
+              className="main-image"
+              style={{ cursor: 'zoom-in' }}
+              onClick={() => setModalOpen(true)}
+              title="Click to zoom"
+            >
               <img 
                 src={shoe.images[selectedImageIndex]} 
                 alt={shoe.name}
+                style={{ transition: 'transform 0.3s' }}
               />
             </div>
             <div className="thumbnail-images">
@@ -193,7 +270,7 @@ const DetailsShoesPage = ({ addToCart, isAuthenticated }) => {
                 >
                   <img 
                     src={image} 
-                    alt={`${shoe.name} view ${index + 1}`}
+                    alt={`${shoe.name} view`}
                     onError={(e) => {
                       e.target.src = 'https://via.placeholder.com/100x100?text=No+Image'
                     }}
@@ -202,6 +279,89 @@ const DetailsShoesPage = ({ addToCart, isAuthenticated }) => {
               ))}
             </div>
           </div>
+
+          {/* Modal for zoomable and rotatable image */}
+          <Dialog
+            open={modalOpen}
+            onClose={() => setModalOpen(false)}
+            maxWidth="md"
+            PaperProps={{
+              style: { 
+                background: 'rgba(30,30,30,0.98)', 
+                boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
+                overflow: 'hidden'
+              }
+            }}
+          >
+            <div style={{ position: 'relative', padding: 0, background: 'transparent' }}>
+              <IconButton
+                onClick={() => setModalOpen(false)}
+                style={{ position: 'absolute', top: 12, right: 12, color: '#fff', zIndex: 2 }}
+                aria-label="Close"
+              >
+                <CloseIcon />
+              </IconButton>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minWidth: 350,
+                  minHeight: 350,
+                  padding: 32,
+                  background: 'transparent'
+                }}
+              >
+                <img
+                  src={shoe.images[selectedImageIndex]}
+                  alt={shoe.name}
+                  style={{
+                    maxWidth: '80vw',
+                    maxHeight: '70vh',
+                    transform: `scale(${zoom}) rotate(${rotation}deg)`,
+                    transition: 'transform 0.3s',
+                    borderRadius: 16,
+                    boxShadow: '0 4px 32px rgba(0,0,0,0.4)',
+                    background: '#fff'
+                  }}
+                />
+                <div style={{ marginTop: 24, display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <IconButton
+                    onClick={() => setZoom(z => Math.max(1, z - 0.2))}
+                    disabled={zoom <= 1}
+                    style={{ color: '#fff', background: 'rgba(0,0,0,0.3)' }}
+                    aria-label="Zoom out"
+                  >
+                    <ZoomOutIcon />
+                  </IconButton>
+                  <span style={{ color: '#fff', fontWeight: 600, fontSize: 18 }}>{Math.round(zoom * 100)}%</span>
+                  <IconButton
+                    onClick={() => setZoom(z => Math.min(3, z + 0.2))}
+                    disabled={zoom >= 3}
+                    style={{ color: '#fff', background: 'rgba(0,0,0,0.3)' }}
+                    aria-label="Zoom in"
+                  >
+                    <ZoomInIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => setRotation(r => r - 90)}
+                    style={{ color: '#fff', background: 'rgba(0,0,0,0.3)' }}
+                    aria-label="Rotate left"
+                  >
+                    <RotateLeftIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => setRotation(r => r + 90)}
+                    style={{ color: '#fff', background: 'rgba(0,0,0,0.3)' }}
+                    aria-label="Rotate right"
+                  >
+                    <RotateRightIcon />
+                  </IconButton>
+                </div>
+              </div>
+            </div>
+          </Dialog>
 
           {/* Product Info */}
           <div className="product-info">
@@ -229,7 +389,16 @@ const DetailsShoesPage = ({ addToCart, isAuthenticated }) => {
             {/* Size Selection */}
             <div className="size-selection">
               <h3>Select Size</h3>
-              <div className="size-options">
+              <div
+                className="size-options"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  gap: '12px',
+                  marginBottom: '0.5rem',
+                }}
+              >
                 {shoe.sizes.map((size) => {
                   const available = getSizeAvailability(size)
                   const isAvailable = available > 0
@@ -334,6 +503,19 @@ const DetailsShoesPage = ({ addToCart, isAuthenticated }) => {
             </div>
           </div>
         </div>
+
+        {/* Alert Dialog for messages */}
+        <Dialog open={!!alertMessage} onClose={() => setAlertMessage('')}>
+          <DialogTitle>Notice</DialogTitle>
+          <DialogContent>
+            <div style={{ minWidth: 220 }}>{alertMessage}</div>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setAlertMessage('')} autoFocus>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </div>
   )

@@ -141,11 +141,7 @@
   gap: 12px;
 }
 
-.product-image {
-  width: 48px !important;
-  height: 48px !important;
-  border-radius: 8px !important;
-}
+
 
 .sku-text {
   font-family: "Monaco", "Menlo", monospace !important;

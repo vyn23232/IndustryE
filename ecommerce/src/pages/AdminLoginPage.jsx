@@ -131,6 +131,7 @@ export default function AdminLoginPage({ onLogin }) {
                       onClick={() => setShowPassword(!showPassword)} 
                       edge="end"
                       size="small"
+                      tabIndex={-1} // Prevents double focus
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>

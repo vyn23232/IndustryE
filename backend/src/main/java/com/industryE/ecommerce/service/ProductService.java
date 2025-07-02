@@ -1,4 +1,4 @@
-package com.industryE.ecommerce.service;
+ package com.industryE.ecommerce.service;
 
 import java.util.List;
 import java.util.stream.Collectors;

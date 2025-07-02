@@ -141,7 +141,7 @@ const LoginPage = ({ onLogin }) => {
           <div className="auth-footer">
             <p>Don't have an account? 
               <Link to="/signup" className="link-btn">
-                Sign up for ShoeStop
+                Sign up
               </Link>
             </p>
 

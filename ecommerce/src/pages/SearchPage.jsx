@@ -272,45 +272,160 @@ const SearchPage = ({ addToCart, isAuthenticated }) => {
           {!loading && searchResults.length > 0 && (
             <div className="results-grid">
               {searchResults.map((shoe) => (
-                <div 
-                  key={shoe.id} 
+                <div
+                  key={shoe.id}
                   className="product-card"
                   onClick={() => openShoeModal(shoe)}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    height: 420,
+                    background: "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%)",
+                    borderRadius: 20,
+                    padding: 0,
+                    transition: "all 0.3s ease",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    position: "relative",
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                    margin: "0 0 24px 0"
+                  }}
                 >
-                  <div className="product-image">
-                    <img 
-                      src={shoe.image} 
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "40%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "#fff",
+                      padding: 0,
+                      margin: 0,
+                      borderTopLeftRadius: 20,
+                      borderTopRightRadius: 20,
+                      overflow: "hidden"
+                    }}
+                  >
+                    <img
+                      src={shoe.image}
                       alt={shoe.name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        display: "block",
+                        background: "#fff",
+                        borderRadius: 0,
+                        transition: "transform 0.3s"
+                      }}
                     />
-                    <button 
-                      className="wishlist-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                  </div>
+                  <div
+                    className="product-info"
+                    style={{
+                      flex: 1,
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      textAlign: "center",
+                      padding: "1.5rem 1rem 1.5rem 1rem",
+                      background: "transparent"
+                    }}
+                  >
+                    <h3
+                      className="product-name"
+                      style={{
+                        fontSize: "1.3rem",
+                        fontWeight: 600,
+                        marginBottom: 8
                       }}
                     >
-                      ♡
-                    </button>
-                  </div>
-                  <div className="product-info">
-                    <h3 className="product-name">{shoe.name}</h3>
-                    <p className="product-color">Category: {shoe.category}</p>
-                    <div className="product-rating">
+                      {shoe.name}
+                    </h3>
+                    <p
+                      className="product-color"
+                      style={{
+                        color: "#b3b3b3",
+                        marginBottom: 12
+                      }}
+                    >
+                      Category: {shoe.category}
+                    </p>
+                    <div
+                      className="product-rating"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
+                        marginBottom: 16
+                      }}
+                    >
                       <span className="stars">⭐⭐⭐⭐⭐</span>
-                      <span className="rating-value">({shoe.rating})</span>
+                      <span
+                        className="rating-value"
+                        style={{
+                          color: "#b3b3b3",
+                          fontSize: "0.9rem"
+                        }}
+                      >
+                        ({shoe.rating})
+                      </span>
                     </div>
-                    <div className="product-price">₱{shoe.price}</div>
-                    {isAuthenticated && (
-                      <button 
+                    <div
+                      className="product-price"
+                      style={{
+                        fontSize: "1.5rem",
+                        fontWeight: 700,
+                        color: "#ff6b35",
+                        marginBottom: 20
+                      }}
+                    >
+                      ₱{shoe.price}
+                    </div>
+                    {isAuthenticated ? (
+                      <button
                         className="add-to-cart-btn btn-primary"
-                        onClick={(e) => handleQuickAddToCart(e, shoe)}
+                        style={{
+                          width: "100%",
+                          padding: 12,
+                          fontWeight: 600,
+                          borderRadius: 8,
+                          background: "linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)",
+                          color: "#fff",
+                          border: "none",
+                          marginTop: "auto",
+                          transition: "background 0.3s"
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleQuickAddToCart(e, shoe);
+                        }}
                       >
                         Add to Cart
                       </button>
-                    )}
-                    {!isAuthenticated && (
-                      <button 
+                    ) : (
+                      <button
                         className="login-required-btn btn-secondary"
-                        onClick={() => navigate('/login')}
+                        style={{
+                          width: "100%",
+                          padding: 12,
+                          fontWeight: 600,
+                          borderRadius: 8,
+                          background: "#fff",
+                          color: "#ff6b35",
+                          border: "1px solid #ff6b35",
+                          marginTop: "auto",
+                          transition: "background 0.3s"
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate('/login');
+                        }}
                       >
                         Login to Add to Cart
                       </button>

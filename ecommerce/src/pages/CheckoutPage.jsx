@@ -253,15 +253,77 @@ const CheckoutPage = ({ cart, user, onOrderComplete, isAuthenticated }) => {
               <div className="order-summary">
                 <div className="order-items">
                   {cart.map(item => (
-                    <div key={`${item.id}-${item.size || 'no-size'}`} className="order-item">
-                      <img src={item.image} alt={item.name} />
-                      <div className="item-details">
-                        <h4>{item.name}</h4>
-                        <p>Qty: {item.quantity}</p>
-                        {item.size && <p>Size: {item.size}</p>}
-                        <p>₱{item.price}</p>
+                    <div key={`${item.id}-${item.size || 'no-size'}`} className="order-item" style={{ alignItems: 'center', gap: 18 }}>
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        style={{
+                          width: 100,
+                          height: 100,
+                          objectFit: 'cover',
+                          borderRadius: 12,
+                          background: '#fff',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+                          marginRight: 22,
+                          border: '1px solid #eee'
+                        }}
+                      />
+                      <div className="item-details" style={{ flex: 1 }}>
+                        <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600 }}>{item.name}</h4>
+                        <p style={{ margin: '2px 0', color: '#888', fontSize: 14 }}>Size: {item.size || 'N/A'}</p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <button
+                            className="quantity-btn"
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: 8,
+                              border: '1px solid #eee',
+                              background: '#fafafa',
+                              color: '#ff6b35',
+                              fontWeight: 700,
+                              fontSize: 18,
+                              cursor: 'pointer'
+                            }}
+                            onClick={() => {
+                              if (item.quantity > 1) {
+                                // Call a prop or context function to update quantity
+                                if (typeof item.onUpdateQuantity === 'function') {
+                                  item.onUpdateQuantity(item.id, item.quantity - 1, item.size)
+                                }
+                              }
+                            }}
+                            disabled={item.quantity <= 1}
+                            aria-label="Decrease quantity"
+                          >-</button>
+                          <span style={{ minWidth: 24, textAlign: 'center', fontWeight: 600 }}>{item.quantity}</span>
+                          <button
+                            className="quantity-btn"
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: 8,
+                              border: '1px solid #eee',
+                              background: '#fafafa',
+                              color: '#ff6b35',
+                              fontWeight: 700,
+                              fontSize: 18,
+                              cursor: 'pointer'
+                            }}
+                            onClick={() => {
+                              // Call a prop or context function to update quantity
+                              if (typeof item.onUpdateQuantity === 'function') {
+                                item.onUpdateQuantity(item.id, item.quantity + 1, item.size)
+                              }
+                            }}
+                            aria-label="Increase quantity"
+                          >+</button>
+                        </div>
+                        <p style={{ margin: '2px 0', color: '#ff6b35', fontWeight: 600, fontSize: 15 }}>₱{item.price}</p>
                       </div>
-                      <div className="item-total">₱{(item.price * item.quantity).toFixed(2)}</div>
+                      <div className="item-total" style={{ fontWeight: 700, color: '#ff6b35', fontSize: 16 }}>
+                        ₱{(item.price * item.quantity).toFixed(2)}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -301,14 +363,28 @@ const CheckoutPage = ({ cart, user, onOrderComplete, isAuthenticated }) => {
           <h3>Order Summary</h3>
           <div className="sidebar-items">
             {cart.map(item => (
-              <div key={`${item.id}-${item.size || 'no-size'}`} className="sidebar-item">
-                <img src={item.image} alt={item.name} />
+              <div key={`${item.id}-${item.size || 'no-size'}`} className="sidebar-item" style={{ alignItems: 'center', gap: 10 }}>
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  style={{
+                    width: 64,            
+                    height: 64,           
+                    objectFit: 'cover',
+                    borderRadius: 10,
+                    background: '#fff',
+                    border: '1px solid #eee',
+                    marginRight: 14      
+                  }}
+                />
                 <div>
-                  <p>{item.name}</p>
-                  <p>Qty: {item.quantity}</p>
-                  {item.size && <p>Size: {item.size}</p>}
+                  <p style={{ margin: 0, fontWeight: 500 }}>{item.name}</p>
+                  <p style={{ margin: 0, color: '#888', fontSize: 13 }}>Qty: {item.quantity}</p>
+                  {item.size && <p style={{ margin: 0, color: '#888', fontSize: 13 }}>Size: {item.size}</p>}
                 </div>
-                <span>₱{(item.price * item.quantity).toFixed(2)}</span>
+                <span style={{ fontWeight: 600, color: '#ff6b35', marginLeft: 'auto' }}>
+                  ₱{(item.price * item.quantity).toFixed(2)}
+                </span>
               </div>
             ))}
           </div>

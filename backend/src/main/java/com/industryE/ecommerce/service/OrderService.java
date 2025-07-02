@@ -22,6 +22,9 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private ProductSizeInventoryService productSizeInventoryService;
+
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request, User user) {
         try {
@@ -60,6 +63,18 @@ public class OrderService {
             List<OrderItem> orderItems = new ArrayList<>();
             if (request.getItems() != null && !request.getItems().isEmpty()) {
                 for (CreateOrderRequest.OrderItemRequest itemRequest : request.getItems()) {
+                    // Check size inventory before creating order item
+                    boolean available = productSizeInventoryService.checkAvailability(
+                        itemRequest.getProductId(), itemRequest.getSize(), itemRequest.getQuantity()
+                    );
+                    if (!available) {
+                        throw new RuntimeException("Size " + itemRequest.getSize() + " is out of stock or insufficient quantity.");
+                    }
+                    // Reserve inventory (optional: for more robust concurrency)
+                    productSizeInventoryService.reserveInventory(
+                        itemRequest.getProductId(), itemRequest.getSize(), itemRequest.getQuantity()
+                    );
+
                     OrderItem orderItem = new OrderItem();
                     orderItem.setOrder(order); // Set reference to order
                     orderItem.setProductName(itemRequest.getName());

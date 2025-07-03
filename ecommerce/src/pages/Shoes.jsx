@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { mapProductsWithImages } from '../utils/imageMapper'
 import axios from 'axios'
+import Dialog from '@mui/material/Dialog'
+import IconButton from '@mui/material/IconButton'
+import CloseIcon from '@mui/icons-material/Close'
 import '../css/AllShoes.css'
 
 const Shoes = ({ addToCart, isAuthenticated, user }) => {
@@ -14,6 +17,14 @@ const Shoes = ({ addToCart, isAuthenticated, user }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
 
+  // Modal state for slideshow
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalImages, setModalImages] = useState([])
+  const [modalShoeName, setModalShoeName] = useState('')
+  const [modalIndex, setModalIndex] = useState(0)
+  const intervalRef = useRef(null)
+  const holdTimeoutRef = useRef(null)
+
   // Available categories
   const categories = [
     { key: 'all', label: 'All Shoes' },
@@ -23,60 +34,58 @@ const Shoes = ({ addToCart, isAuthenticated, user }) => {
     { key: 'limited', label: 'Limited Edition' }
   ]
 
-  // Fetch products from local data
   useEffect(() => {
     fetchProducts()
   }, [])
 
-  // Handle category filtering and search from URL params
   useEffect(() => {
     const categoryParam = searchParams.get('category')
     const searchParam = searchParams.get('search')
-    
     if (searchParam) {
       setSearchQuery(searchParam)
-      setActiveCategory('all') // Reset category when searching
+      setActiveCategory('all')
     } else if (categoryParam && categories.find(cat => cat.key === categoryParam)) {
       setActiveCategory(categoryParam)
-      setSearchQuery('') // Reset search when filtering by category
+      setSearchQuery('')
     } else {
       setActiveCategory('all')
       setSearchQuery('')
     }
   }, [searchParams])
 
-  // Filter shoes based on active category and search query
   useEffect(() => {
     let filteredShoes = allShoes
-
     if (searchQuery) {
-      // If there's a search query, filter by name (case insensitive)
-      filteredShoes = allShoes.filter(shoe => 
+      filteredShoes = allShoes.filter(shoe =>
         shoe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         shoe.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         shoe.category.toLowerCase().includes(searchQuery.toLowerCase())
       )
     } else if (activeCategory !== 'all') {
-      // If no search but has category filter
       filteredShoes = allShoes.filter(shoe => shoe.category === activeCategory)
     }
-
     setShoes(filteredShoes)
-    setCurrentIndex(0) // Reset slider position when filtering changes
+    setCurrentIndex(0)
   }, [activeCategory, allShoes, searchQuery])
+
+  // Slideshow effect for modal
+  useEffect(() => {
+    if (modalOpen && modalImages.length > 1) {
+      intervalRef.current = setInterval(() => {
+        setModalIndex(prev => (prev + 1) % modalImages.length)
+      }, 1000)
+    }
+    return () => clearInterval(intervalRef.current)
+  }, [modalOpen, modalImages])
 
   const fetchProducts = async () => {
     try {
       setLoading(true)
-      // Fetch products from backend API
       const response = await axios.get('http://localhost:8080/api/products')
-      
-      // Map backend data with local images
       const productsWithImages = mapProductsWithImages(response.data)
       setAllShoes(productsWithImages)
     } catch (error) {
       console.error('Error loading products from backend:', error)
-      // Fallback to empty array or show error message
       setAllShoes([])
     } finally {
       setLoading(false)
@@ -90,12 +99,29 @@ const Shoes = ({ addToCart, isAuthenticated, user }) => {
     } else {
       setSearchParams({ category: categoryKey })
     }
-    setSearchQuery('') // Clear search when changing category
+    setSearchQuery('')
   }
 
   const handleViewProduct = (shoe) => {
-    // Navigate to detail page for size selection and add to cart
     navigate(`/shoes/${shoe.id}`)
+  }
+
+  // Hold-to-show modal logic
+  const handleImageMouseDown = (e, shoe) => {
+    if (e.button === 0) { // left mouse button
+      holdTimeoutRef.current = setTimeout(() => {
+        setModalImages(shoe.images && shoe.images.length >= 5 ? shoe.images.slice(0, 5) : [shoe.image])
+        setModalShoeName(shoe.name)
+        setModalIndex(0)
+        setModalOpen(true)
+      }, 400) // 400ms hold
+    }
+  }
+  const handleImageMouseUp = () => clearTimeout(holdTimeoutRef.current)
+  const handleModalClose = () => {
+    setModalOpen(false)
+    setModalImages([])
+    setModalIndex(0)
   }
 
   const scrollRight = () => {
@@ -103,7 +129,6 @@ const Shoes = ({ addToCart, isAuthenticated, user }) => {
       setCurrentIndex(prevIndex => prevIndex + 1)
     }
   }
-  
   const scrollLeft = () => {
     if (currentIndex > 0) {
       setCurrentIndex(prevIndex => prevIndex - 1)
@@ -271,6 +296,9 @@ const Shoes = ({ addToCart, isAuthenticated, user }) => {
                           borderTopRightRadius: 20,
                           overflow: "hidden"
                         }}
+                        onMouseDown={e => handleImageMouseDown(e, shoe)}
+                        onMouseUp={handleImageMouseUp}
+                        onMouseLeave={handleImageMouseUp}
                       >
                         <img
                           src={shoe.image}
@@ -379,13 +407,66 @@ const Shoes = ({ addToCart, isAuthenticated, user }) => {
 
               <div className="products-pagination">
                 {Array.from({ length: Math.ceil(shoes.length / 4) }).map((_, index) => (
-                  <button 
-                    key={index} 
+                  <button
+                    key={index}
                     className={`pagination-dot ${currentIndex === index * 4 ? 'active' : ''}`}
                     onClick={() => setCurrentIndex(index * 4)}
                   />
                 ))}
               </div>
+
+              {/* Modal for slideshow */}
+              <Dialog
+                open={modalOpen}
+                onClose={handleModalClose}
+                maxWidth="md"
+                PaperProps={{
+                  style: {
+                    background: 'rgba(30,30,30,0.98)',
+                    boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
+                    overflow: 'hidden',
+                    borderRadius: 20,
+                  }
+                }}
+              >
+                <div style={{ position: 'relative', padding: 0, background: 'transparent' }}>
+                  <IconButton
+                    onClick={handleModalClose}
+                    style={{ position: 'absolute', top: 12, right: 12, color: '#fff', zIndex: 2 }}
+                    aria-label="Close"
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      minWidth: 350,
+                      minHeight: 350,
+                      padding: 32,
+                      background: 'transparent'
+                    }}
+                  >
+                    <img
+                      src={modalImages[modalIndex]}
+                      alt={modalShoeName}
+                      style={{
+                        maxWidth: '60vw',
+                        maxHeight: '60vh',
+                        borderRadius: 16,
+                        boxShadow: '0 4px 32px rgba(0,0,0,0.4)',
+                        background: '#fff',
+                        transition: 'opacity 0.5s'
+                      }}
+                    />
+                    <div style={{ marginTop: 18, color: '#fff', fontWeight: 600, fontSize: 18 }}>
+                      {modalShoeName} <span style={{ fontSize: 14, color: '#bbb' }}>({modalIndex + 1}/{modalImages.length})</span>
+                    </div>
+                  </div>
+                </div>
+              </Dialog>
             </>
           )}
         </div>

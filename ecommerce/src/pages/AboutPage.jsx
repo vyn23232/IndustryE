@@ -4,6 +4,9 @@ import StatCard from '../components/StatCard'
 import ValueCard from '../components/ValueCard'
 import TeamMemberCard from '../components/TeamMemberCard'
 import vynImage from '../assets/images/vyn.jpg'
+import markImage from '../assets/images/GaringProfile.png'
+import josefImage from '../assets/images/CajesProfile.png'
+
 
 const AboutPage = () => {
   const stats = [
@@ -38,8 +41,8 @@ const AboutPage = () => {
 
   const team = [
     { name: 'Jhovynn Aldrich Apurado', role: 'Founder & CEO', emoji: '👨‍💼', image: vynImage },
-    { name: 'Mark Christian Garing', role: 'Head of Design', emoji: '👩‍🎨' },
-    { name: 'Josef Cajes', role: 'Customer Experience', emoji: '👨‍💻' },
+    { name: 'Mark Christian Garing', role: 'Head of Design', emoji: '👩‍🎨', image: markImage},
+    { name: 'Josef Cajes', role: 'Customer Experience', emoji: '👨‍💻', image: josefImage },
   ]
 
   return (

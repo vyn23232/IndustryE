@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import '../css/ProfilePageNew.css'
 
@@ -19,14 +19,7 @@ const ProfilePage = ({ user, setUser, setToast, onLogout }) => {
     newPassword: '',
     confirmNewPassword: ''
   })
-  const [orders, setOrders] = useState([])
-  const [userStats, setUserStats] = useState({
-    totalOrders: 0,
-    totalSpent: 0,
-    avgOrderValue: 0
-  })
   const [isLoading, setIsLoading] = useState(false)
-  const [isLoadingOrders, setIsLoadingOrders] = useState(false)
   const [passwordErrors, setPasswordErrors] = useState({})
 
   // Update form data when user prop changes
@@ -41,44 +34,6 @@ const ProfilePage = ({ user, setUser, setToast, onLogout }) => {
       })
     }
   }, [user])
-
-  // Fetch orders and calculate stats when profile tab is active
-  useEffect(() => {
-    if (activeTab === 'orders' || activeTab === 'profile') {
-      fetchUserOrders()
-    }
-  }, [activeTab])
-
-  const fetchUserOrders = async () => {
-    try {
-      setIsLoadingOrders(true)
-      const token = localStorage.getItem('token')
-      if (!token) return
-
-      const response = await axios.get('http://localhost:8080/api/orders/user', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      
-      setOrders(response.data)
-      
-      // Calculate stats
-      const totalOrders = response.data.length
-      const totalSpent = response.data.reduce((sum, order) => sum + order.totalAmount, 0)
-      const avgOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0
-      
-      setUserStats({
-        totalOrders,
-        totalSpent,
-        avgOrderValue
-      })
-    } catch (error) {
-      console.error('Error fetching orders:', error)
-    } finally {
-      setIsLoadingOrders(false)
-    }
-  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -265,10 +220,6 @@ const ProfilePage = ({ user, setUser, setToast, onLogout }) => {
     })
   }
 
-  const formatCurrency = (amount) => {
-    return `₱${amount.toFixed(2)}`
-  }
-
   const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : '?'
 
   return (
@@ -287,16 +238,6 @@ const ProfilePage = ({ user, setUser, setToast, onLogout }) => {
             </div>
             <h3 className="user-name">{user?.name || 'User Name'}</h3>
             <p className="user-email">{user?.email || 'user@example.com'}</p>
-            <div className="user-stats">
-              <div className="stat">
-                <span className="stat-number">{userStats.totalOrders}</span>
-                <span className="stat-label">Orders</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">{formatCurrency(userStats.totalSpent)}</span>
-                <span className="stat-label">Total Spent</span>
-              </div>
-            </div>
           </div>
 
           {/* Navigation Menu */}
@@ -307,13 +248,6 @@ const ProfilePage = ({ user, setUser, setToast, onLogout }) => {
             >
               <span className="menu-icon">👤</span>
               Personal Info
-            </button>
-            <button 
-              className={`menu-item ${activeTab === 'orders' ? 'active' : ''}`}
-              onClick={() => setActiveTab('orders')}
-            >
-              <span className="menu-icon">📦</span>
-              Order History
             </button>
             <button 
               className={`menu-item ${activeTab === 'security' ? 'active' : ''}`}
@@ -418,59 +352,6 @@ const ProfilePage = ({ user, setUser, setToast, onLogout }) => {
             </div>
           )}
 
-          {/* Order History Tab */}
-          {activeTab === 'orders' && (
-            <div className="form-card">
-              <div className="form-header">
-                <h2>Order History</h2>
-                <p>Track your previous orders and purchases</p>
-              </div>
-              
-              {isLoadingOrders ? (
-                <div className="loading-state">
-                  <p>Loading your orders...</p>
-                </div>
-              ) : orders.length === 0 ? (
-                <div className="empty-state">
-                  <span className="empty-icon">📦</span>
-                  <h3>No Orders Yet</h3>
-                  <p>You haven't placed any orders yet. Start shopping to see your order history here!</p>
-                  <Link to="/shoes" className="cta-btn">
-                    Start Shopping
-                  </Link>
-                </div>
-              ) : (
-                <div className="orders-list">
-                  {orders.map(order => (
-                    <div key={order.id} className="order-card">
-                      <div className="order-header">
-                        <div className="order-info">
-                          <h4>Order #{order.orderNumber}</h4>
-                          <p className="order-date">{formatDate(order.orderDate)}</p>
-                        </div>
-                        <div className="order-status">
-                          <span className={`status-badge ${order.status.toLowerCase()}`}>
-                            {order.status}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="order-details">
-                        <div className="order-amount">
-                          <strong>{formatCurrency(order.totalAmount)}</strong>
-                        </div>
-                        <div className="order-items">
-                          {order.items && order.items.length > 0 && (
-                            <p>{order.items.length} item{order.items.length > 1 ? 's' : ''}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Security Tab */}
           {activeTab === 'security' && (
             <div className="form-card">
@@ -559,19 +440,6 @@ const ProfilePage = ({ user, setUser, setToast, onLogout }) => {
                     onClick={() => setActiveTab('profile')}
                   >
                     Edit Profile
-                  </button>
-                </div>
-                
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <h4>Order History</h4>
-                    <p>View your complete purchase history</p>
-                  </div>
-                  <button 
-                    className="setting-btn secondary"
-                    onClick={() => setActiveTab('orders')}
-                  >
-                    View Orders
                   </button>
                 </div>
                 

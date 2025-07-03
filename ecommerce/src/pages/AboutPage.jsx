@@ -3,6 +3,7 @@ import '../css/AboutPage.css'
 import StatCard from '../components/StatCard'
 import ValueCard from '../components/ValueCard'
 import TeamMemberCard from '../components/TeamMemberCard'
+import vynImage from '../assets/images/vyn.jpg'
 
 const AboutPage = () => {
   const stats = [
@@ -36,7 +37,7 @@ const AboutPage = () => {
   ]
 
   const team = [
-    { name: 'Jhovynn Aldrich Apurado', role: 'Founder & CEO', emoji: '👨‍💼' },
+    { name: 'Jhovynn Aldrich Apurado', role: 'Founder & CEO', emoji: '👨‍💼', image: vynImage },
     { name: 'Mark Christian Garing', role: 'Head of Design', emoji: '👩‍🎨' },
     { name: 'Josef Cajes', role: 'Customer Experience', emoji: '👨‍💻' },
   ]

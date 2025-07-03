@@ -106,7 +106,7 @@
 .products-slider {
   display: flex;
   transition: transform 0.5s ease;
-  gap: 30px;
+  gap: 9.9px;
 }
 
 .products-grid {

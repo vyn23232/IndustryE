@@ -378,7 +378,7 @@ const DetailsShoesPage = ({ addToCart, isAuthenticated }) => {
                 <span className="rating-text">({shoe.rating})</span>
               </div>
               <div className="product-price">
-                <span className="price">₱{shoe.price}</span>
+                <span className="price">₱{parseFloat(shoe.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
             </div>
 

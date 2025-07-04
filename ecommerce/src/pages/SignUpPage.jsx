@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import '../css/AuthPage.css'
 
-const SignUpPage = ({ setCurrentPage, setToast }) => {
+const SignUpPage = ({ setToast }) => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -95,7 +97,7 @@ const SignUpPage = ({ setCurrentPage, setToast }) => {
         })
         // Redirect to login page after a short delay
         setTimeout(() => {
-          setCurrentPage('login')
+          navigate('/login')
         }, 2000)
       } else {
         setErrors({ general: data.message || 'Registration failed. Please try again.' })
@@ -186,21 +188,29 @@ const SignUpPage = ({ setCurrentPage, setToast }) => {
 
           <div className="auth-footer">
             <p>Already have an account? 
-              <button 
-                className="link-btn"
-                onClick={() => setCurrentPage('login')}
-              >
-                Sign in to ShoeStop
-              </button>
+              <Link to="/login" className="link-btn">
+                Sign in
+              </Link>
             </p>
           </div>
         </div>
 
         <div className="auth-image">
           <div className="image-content">
-            <span style={{fontSize: '120px'}}>🎉</span>
-            <h3>Welcome Aboard!</h3>
-            <p>Join thousands of happy customers shopping with us</p>
+            <div style={{fontSize: '80px', marginBottom: '20px'}}>👟</div>
+            <h3>Step Into Style!</h3>
+            <p>Join thousands of satisfied customers and discover your perfect pair</p>
+            <div className="features-list">
+              <div className="feature-item">
+                <span>✓</span> Premium Quality Shoes
+              </div>
+              <div className="feature-item">
+                <span>✓</span> Fast & Free Shipping
+              </div>
+              <div className="feature-item">
+                <span>✓</span> 30-Day Return Policy
+              </div>
+            </div>
           </div>
         </div>
       </div>

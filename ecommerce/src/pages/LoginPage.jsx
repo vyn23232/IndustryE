@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import '../css/AuthPage.css'
 
-const LoginPage = ({ onLogin, setCurrentPage }) => {
+const LoginPage = ({ onLogin }) => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -48,9 +50,10 @@ const LoginPage = ({ onLogin, setCurrentPage }) => {
     
     if (!validateForm()) {
       return
-    }    setIsLoading(true)
+    }
     
-    // Connect to Spring Boot backend
+    setIsLoading(true)
+    
     try {
       const response = await fetch('http://localhost:8080/api/auth/login', {
         method: 'POST',
@@ -66,7 +69,14 @@ const LoginPage = ({ onLogin, setCurrentPage }) => {
       const data = await response.json()
       
       if (response.ok) {
-        // Store JWT token
+        // Check if user is admin - block admin from customer login
+        if (data.user && data.user.role === 'ADMIN') {
+          setErrors({ general: 'Admin accounts cannot login here. Please use the admin portal.' })
+          return
+        }
+        
+        // Allow only regular users to login to customer interface
+        localStorage.setItem('user', JSON.stringify(data.user))
         localStorage.setItem('token', data.token)
         onLogin(data.user)
       } else {
@@ -130,13 +140,11 @@ const LoginPage = ({ onLogin, setCurrentPage }) => {
 
           <div className="auth-footer">
             <p>Don't have an account? 
-              <button 
-                className="link-btn"
-                onClick={() => setCurrentPage('signup')}
-              >
-                Sign up for ShoeStop
-              </button>
+              <Link to="/signup" className="link-btn">
+                Sign up
+              </Link>
             </p>
+
           </div>
         </div>
 

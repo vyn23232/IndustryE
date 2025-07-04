@@ -1,0 +1,246 @@
+.dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #333333 100%);
+}
+
+.dashboard-appbar {
+  background-color: #000000 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.app-logo {
+  color: #ff6900 !important;
+  margin-right: 12px;
+  font-size: 28px !important;
+}
+
+.dashboard-title {
+  font-weight: 700 !important;
+  font-size: 20px !important;
+}
+
+.notification-btn {
+  margin-right: 8px !important;
+}
+
+.dashboard-content {
+  padding: 32px 24px !important;
+}
+
+.dashboard-header {
+  margin-bottom: 32px;
+}
+
+.dashboard-welcome {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  margin-bottom: 8px !important;
+}
+
+.dashboard-date {
+  color: #cccccc !important;
+  font-size: 16px !important;
+}
+
+.stats-grid {
+  margin-bottom: 48px !important;
+}
+
+.stat-card {
+  height: 140px;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease !important;
+  border: 1px solid #333333;
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4) !important;
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 24px !important;
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.stat-icon-container {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-icon {
+  font-size: 24px !important;
+}
+
+.stat-change {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+.stat-value {
+  font-weight: 800 !important;
+  color: #000000;
+  font-size: 28px !important;
+  margin-bottom: 4px !important;
+}
+
+.stat-title {
+  color: #666666;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+
+.quick-actions-section {
+  margin-bottom: 48px;
+}
+
+.section-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  margin-bottom: 24px !important;
+}
+
+.quick-actions-grid {
+  margin-bottom: 32px;
+}
+
+.action-card {
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer;
+  border: 1px solid #333333;
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4) !important;
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+.action-content {
+  padding: 32px 24px !important;
+  text-align: center;
+}
+
+.action-icon-container {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.action-icon {
+  font-size: 32px !important;
+}
+
+.action-title {
+  color: #000000;
+  font-weight: 700 !important;
+  margin-bottom: 12px !important;
+  font-size: 18px !important;
+}
+
+.action-description {
+  color: #666666;
+  margin-bottom: 0 !important;
+  line-height: 1.6;
+}
+
+.management-section {
+  margin-top: 32px;
+}
+
+.management-card {
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid #333333;
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.management-title {
+  color: #000000;
+  font-weight: 700 !important;
+  margin-bottom: 12px !important;
+}
+
+.management-description {
+  color: #666666;
+  margin-bottom: 24px !important;
+  line-height: 1.6;
+}
+
+.management-button {
+  border-radius: 12px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  padding: 12px 24px !important;
+  background-color: #000000 !important;
+  height: 48px;
+}
+
+.management-button:hover {
+  background-color: #333333 !important;
+}
+
+.management-button-outlined {
+  border-radius: 12px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  padding: 12px 24px !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+  height: 48px;
+}
+
+.management-button-outlined:hover {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 24px 16px !important;
+  }
+
+  .stat-card {
+    height: 120px;
+  }
+
+  .stat-content {
+    padding: 20px !important;
+  }
+
+  .stat-value {
+    font-size: 24px !important;
+  }
+
+  .action-content {
+    padding: 24px 20px !important;
+  }
+}

@@ -1,0 +1,151 @@
+.notification-modal .MuiDialog-paper {
+  border-radius: 16px !important;
+  max-height: 600px;
+}
+
+.notification-header {
+  padding: 24px 24px 16px !important;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.notification-title-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 700 !important;
+  color: #000000;
+}
+
+.unread-chip {
+  background-color: #ff6900 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.notification-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mark-all-read-btn {
+  text-transform: none !important;
+  font-weight: 600 !important;
+  color: #666666 !important;
+  font-size: 12px !important;
+}
+
+.notification-content {
+  padding: 0 !important;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-list {
+  padding: 0 !important;
+}
+
+.notification-item {
+  padding: 16px 24px !important;
+  cursor: pointer;
+  transition: background-color 0.2s ease !important;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa !important;
+}
+
+.notification-item.unread {
+  background-color: #f8f9fa !important;
+}
+
+.notification-avatar {
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.notification-primary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.notification-title-text {
+  font-weight: 600 !important;
+  color: #000000;
+}
+
+.notification-title-text.unread-text {
+  font-weight: 700 !important;
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ff6900;
+  flex-shrink: 0;
+}
+
+.notification-secondary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notification-time {
+  font-size: 11px !important;
+  color: #999999 !important;
+}
+
+.empty-notifications {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 48px !important;
+  color: #28a745;
+  margin-bottom: 16px;
+}
+
+.notification-footer {
+  padding: 16px 24px !important;
+  border-top: 1px solid #e0e0e0;
+}
+
+.notification-footer .MuiButton-outlined {
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  border: 2px solid #e0e0e0 !important;
+  color: #666666 !important;
+}
+
+/* Custom scrollbar */
+.notification-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.notification-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.notification-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

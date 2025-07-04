@@ -1,7 +1,12 @@
 import React from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import '../css/LandingPage.css'
+import FeatureCard from '../components/FeatureCard'
+import TestimonialCard from '../components/TestimonialCard'
+import landingImage from '../assets/images/landingimage.jpg'
 
-const LandingPage = ({ setCurrentPage }) => {
+const LandingPage = () => {
+  const navigate = useNavigate()
   // Updated features for a shoe store
   const features = [
     {
@@ -66,18 +71,13 @@ const LandingPage = ({ setCurrentPage }) => {
                 and exceptional service.
               </p>
               <div className="hero-actions">
-                <button 
-                  className="btn-primary cta-btn"
-                  onClick={() => setCurrentPage('signup')}
-                >
+                <Link to="/signup" className="btn-primary cta-btn">
                   Get Started →
-                </button>
-                <button 
-                  className="btn-secondary"
-                  onClick={() => setCurrentPage('shoes')}
-                >
+                </Link>
+                <Link to="/shoes" className="btn-secondary">
                   Browse Collection
-                </button>
+                </Link>
+
               </div>
               <div className="hero-stats">
                 <div className="stat">
@@ -94,22 +94,33 @@ const LandingPage = ({ setCurrentPage }) => {
                 </div>
               </div>
             </div>
-            <div className="hero-image">
-              <div className="product-showcase">
-                <div className="main-shoe" style={{fontSize: '150px'}}>👟</div>
-                <div className="floating-elements">
-                  <div className="floating-item" style={{top: '10%', right: '15%'}}>👞</div>
-                  <div className="floating-item" style={{top: '70%', left: '5%'}}>👟</div>
-                  <div className="floating-item" style={{bottom: '20%', right: '35%'}}>👢</div>
-                  <div className="floating-item" style={{top: '40%', left: '20%'}}>👠</div>
-                </div>
-              </div>
-              <div className="discount-badge">
-                <div className="discount-text">
-                  <span>Up to 50% OFF</span>
-                  <small>On your first purchase</small>
-                </div>
-              </div>
+            <div className="hero-image" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img 
+                src={landingImage} 
+                alt="ShoeStop Hero" 
+                style={{ 
+                  width: '420px', 
+                  height: 'auto', 
+                  borderRadius: '32px', 
+                  boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+                  objectFit: 'cover',
+                  border: '4px solid #fff',
+                  background: '#fff',
+                  zIndex: 1
+                }}
+              />
+              {/* Decorative gradient circle */}
+              <div style={{
+                position: 'absolute',
+                left: '-60px',
+                top: '40%',
+                width: '180px',
+                height: '180px',
+                background: 'radial-gradient(circle at 60% 40%, #ff6b35 0%, #f7931e 80%, transparent 100%)',
+                borderRadius: '50%',
+                opacity: 0.18,
+                zIndex: 0
+              }} />
             </div>
           </div>
         </div>
@@ -124,11 +135,7 @@ const LandingPage = ({ setCurrentPage }) => {
           </div>
           <div className="features-grid">
             {features.map((feature, index) => (
-              <div key={index} className="feature-card">
-                <div className="feature-icon">{feature.icon}</div>
-                <h3>{feature.title}</h3>
-                <p>{feature.description}</p>
-              </div>
+              <FeatureCard key={index} feature={feature} />
             ))}
           </div>
         </div>
@@ -143,16 +150,7 @@ const LandingPage = ({ setCurrentPage }) => {
           </div>
           <div className="testimonials-grid">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="testimonial-card">
-                <div className="testimonial-rating">
-                  {'⭐'.repeat(testimonial.rating)}
-                </div>
-                <p className="testimonial-comment">"{testimonial.comment}"</p>
-                <div className="testimonial-author">
-                  <span className="author-avatar">{testimonial.avatar}</span>
-                  <span className="author-name">{testimonial.name}</span>
-                </div>
-              </div>
+              <TestimonialCard key={index} testimonial={testimonial} />
             ))}
           </div>
         </div>
@@ -165,18 +163,12 @@ const LandingPage = ({ setCurrentPage }) => {
             <h2>Ready to Start Shopping?</h2>
             <p>Join ShoeStop today and discover amazing deals on your favorite products</p>
             <div className="cta-actions">
-              <button 
-                className="btn-primary cta-btn"
-                onClick={() => setCurrentPage('signup')}
-              >
+              <Link to="/signup" className="btn-primary cta-btn">
                 Create Account
-              </button>
-              <button 
-                className="btn-secondary explore-btn"
-                onClick={() => setCurrentPage('about')}
-              >
+              </Link>
+              <Link to="/about" className="btn-secondary explore-btn">
                 Learn More
-              </button>
+              </Link>
             </div>
           </div>
         </div>

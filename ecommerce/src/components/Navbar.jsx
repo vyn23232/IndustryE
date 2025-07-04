@@ -1,141 +1,47 @@
-import React from 'react'
+import React, { useState } from 'react'
+import logo from '../assets/images/logo2.png'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import '../css/Navbar.css'
 
-const Navbar = ({ currentPage, setCurrentPage, cartItemCount, isAuthenticated, user, onLogout }) => {
-  // Updated navigation items to focus only on shoes
-  const navItems = [
-    { id: 'shoes', label: 'All Shoes', icon: '👟' },
-    { id: 'running', label: 'Running', icon: '🏃' },
-    { id: 'sports', label: 'Sports', icon: '🏀' },
-    { id: 'casual', label: 'Casual', icon: '🥾' },
-    { id: 'limited', label: 'Limited Edition', icon: '✨' },
-  ]
+const Navbar = ({ cartItemCount, isAuthenticated, user, onLogout }) => {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const currentPath = location.pathname
 
   const handleBrandClick = () => {
     if (isAuthenticated) {
-      setCurrentPage('shoes')
+      navigate('/shoes')
     } else {
-      setCurrentPage('landing')
+      navigate('/')
     }
-  }
-
-  const handleNavClick = (pageId) => {
-    setCurrentPage(pageId)
   }
 
   const handleCartClick = () => {
-    if (isAuthenticated) {
-      setCurrentPage('cart')
-    } else {
-      setCurrentPage('login')
-      alert('Please log in to view your cart.')
-    }
+    navigate('/cart')
   }
 
   const handleProfileClick = () => {
     if (isAuthenticated) {
-      setCurrentPage('profile')
+      navigate('/profile')
     } else {
-      setCurrentPage('login')
+      navigate('/login')
     }
+  }
+
+  const handleSearchClick = () => {
+    navigate('/search')
   }
 
   return (
     <nav className="vertical-navbar">
       <div className="nav-container">
         {/* Brand Section */}
+
         <div className="nav-brand" onClick={handleBrandClick}>
-          <div className="brand-icon">🛍️</div>
+          <img src={logo} alt="ShoeStop Logo" className="brand-icon" style={{ width: '100px', height: '100px', objectFit: 'contain', marginLeft: '45px' }} />
           <div className="brand-text">ShoeStop</div>
         </div>
 
-        {/* Navigation Links */}
-        <div className="nav-links">
-          {/* Categories - Only show when authenticated */}
-          {isAuthenticated && (
-            <>
-              <div className="nav-section-title">Categories</div>
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  className={`nav-link ${currentPage === item.id ? 'active' : ''}`}
-                  onClick={() => handleNavClick(item.id)}
-                >
-                  <span className="nav-icon">{item.icon}</span>
-                  <span className="nav-label">{item.label}</span>
-                </button>
-              ))}
-            </>
-          )}
-
-          {/* General Navigation */}
-          <div className="nav-section-title">Menu</div>
-          {!isAuthenticated && (
-            <>
-              <button
-                className={`nav-link ${currentPage === 'landing' ? 'active' : ''}`}
-                onClick={() => setCurrentPage('landing')}
-              >
-                <span className="nav-icon">🏠</span>
-                <span className="nav-label">Home</span>
-              </button>
-              
-              {/* Only show Shop button when NOT logged in */}
-              <button
-                className={`nav-link ${currentPage === 'shoes' ? 'active' : ''}`}
-                onClick={() => setCurrentPage('shoes')}
-              >
-                <span className="nav-icon">👟</span>
-                <span className="nav-label">Shop</span>
-              </button>
-            </>
-          )}
-
-          <button
-            className={`nav-link ${currentPage === 'about' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('about')}
-          >
-            <span className="nav-icon">ℹ️</span>
-            <span className="nav-label">About Us</span>
-          </button>
-
-          {/* Auth Links - Show based on auth status */}
-          {!isAuthenticated ? (
-            <>
-              <button
-                className={`nav-link ${currentPage === 'login' ? 'active' : ''}`}
-                onClick={() => setCurrentPage('login')}
-              >
-                <span className="nav-icon">🔑</span>
-                <span className="nav-label">Login</span>
-              </button>
-              <button
-                className={`nav-link ${currentPage === 'signup' ? 'active' : ''}`}
-                onClick={() => setCurrentPage('signup')}
-              >
-                <span className="nav-icon">📝</span>
-                <span className="nav-label">Sign Up</span>
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                className={`nav-link ${currentPage === 'profile' ? 'active' : ''}`}
-                onClick={handleProfileClick}
-              >
-                <span className="nav-icon">👤</span>
-                <span className="nav-label">Profile</span>
-              </button>
-              <button
-                className="nav-link"
-                onClick={onLogout}
-              >
-                <span className="nav-icon">🚪</span>
-                <span className="nav-label">Logout</span>
-              </button>
-            </>
-          )}
-          
           {/* User Info - Only show when authenticated */}
           {isAuthenticated && user && (
             <div className="user-info">
@@ -148,13 +54,81 @@ const Navbar = ({ currentPage, setCurrentPage, cartItemCount, isAuthenticated, u
               </div>
             </div>
           )}
+        {/* Navigation Links */}
+        <div className="nav-links">
+          {/* General Navigation */}
+          <div className="nav-section-title">Menu</div>
+          {!isAuthenticated && (
+            <>
+              <Link
+                to="/"
+                className={`nav-link ${currentPath === '/' ? 'active' : ''}`}
+              >
+                <span className="nav-label">Home</span>
+              </Link>
+            </>
+          )}
+
+          <Link
+            to="/shoes"
+            className={`nav-link ${currentPath === '/shoes' ? 'active' : ''}`}
+          >
+            <span className="nav-label">Shoes</span>
+          </Link>
+
+          <Link
+            to="/about"
+            className={`nav-link ${currentPath === '/about' ? 'active' : ''}`}
+          >
+            <span className="nav-label">About Us</span>
+          </Link>
+
+          {/* Auth Links - Show based on auth status */}
+          {!isAuthenticated ? (
+            <>
+              <Link
+                to="/login"
+                className={`nav-link ${currentPath === '/login' ? 'active' : ''}`}
+              >
+                <span className="nav-label">Login</span>
+              </Link>
+              <Link
+                to="/signup"
+                className={`nav-link ${currentPath === '/signup' ? 'active' : ''}`}
+              >
+                <span className="nav-label">Sign Up</span>
+              </Link>
+            </>
+          ) : (
+            <>
+              <button
+                className={`nav-link ${currentPath === '/profile' ? 'active' : ''}`}
+                onClick={handleProfileClick}
+              >
+                <span className="nav-label">Profile</span>
+              </button>
+              <Link
+                to="/orders"
+                className={`nav-link ${currentPath === '/orders' ? 'active' : ''}`}
+              >
+                <span className="nav-label">My Orders</span>
+              </Link>
+              
+              <button
+                className="nav-link"
+                onClick={onLogout}
+              >
+                <span className="nav-label">Logout</span>
+              </button>
+            </>
+          )}
         </div>
 
         {/* Action Buttons - Only show when authenticated */}
         {isAuthenticated && (
           <div className="nav-actions">
             <div className="action-buttons">
-              <button className="search-btn" title="Search">
+              <button className="search-btn" title="Search" onClick={handleSearchClick}>
                 <span>🔍</span>
               </button>
               <button onClick={handleCartClick} className="cart-btn" title="Cart">

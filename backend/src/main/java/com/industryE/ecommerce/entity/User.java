@@ -63,7 +63,7 @@ public class User implements UserDetails {
     private Role role = Role.USER;
     
     public enum Role {
-        USER, ADMIN
+        USER,ADMIN
     }
     
     // Constructors
@@ -83,7 +83,7 @@ public class User implements UserDetails {
     // UserDetails implementation
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
     
     @Override

@@ -3,6 +3,7 @@ package com.industryE.ecommerce.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.industryE.ecommerce.dto.ChangePasswordRequest;
 import com.industryE.ecommerce.dto.UpdateUserRequest;
 import com.industryE.ecommerce.dto.UserResponse;
 import com.industryE.ecommerce.entity.User;
@@ -13,6 +14,11 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
 
     public UserResponse getUserProfile(String email) {
         User user = userRepository.findByEmail(email)
@@ -54,17 +60,31 @@ public class UserService {
         return convertToUserResponse(savedUser);
     }
 
+    public void changePassword(String email, ChangePasswordRequest changePasswordRequest) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Verify current password (plain text comparison)
+        if (!changePasswordRequest.getCurrentPassword().equals(user.getPassword())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+
+        // Update password (store as plain text)
+        String newPassword = changePasswordRequest.getNewPassword();
+        user.setPassword(newPassword);
+        userRepository.save(user);
+    }
+
     private UserResponse convertToUserResponse(User user) {
-        UserResponse response = new UserResponse(
+        return new UserResponse(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
                 user.getCreatedAt(),
                 user.getPhone(),
                 user.getLocation(),
-                user.getBio()
+                user.getBio(),
+                user.getRole().name()
         );
-        
-        return response;
     }
 }

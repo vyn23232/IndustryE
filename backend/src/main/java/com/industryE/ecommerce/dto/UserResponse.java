@@ -11,11 +11,12 @@ public class UserResponse {
     private String phone;
     private String location;
     private String bio;
+    private String role;
     
     // Constructors
     public UserResponse() {}
     
-    public UserResponse(Long id, String name, String email, LocalDateTime createdAt, String phone, String location, String bio) {
+    public UserResponse(Long id, String name, String email, LocalDateTime createdAt, String phone, String location, String bio, String role) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -23,6 +24,7 @@ public class UserResponse {
         this.phone = phone;
         this.location = location;
         this.bio = bio;
+        this.role = role;
     }
     
     // Getters and Setters
@@ -80,5 +82,13 @@ public class UserResponse {
     
     public void setBio(String bio) {
         this.bio = bio;
+    }
+    
+    public String getRole() {
+        return role;
+    }
+    
+    public void setRole(String role) {
+        this.role = role;
     }
 }

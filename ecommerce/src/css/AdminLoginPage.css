@@ -1,0 +1,119 @@
+/* AdminLoginPage.css - Simple and Professional Design */
+
+.admin-login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #333333 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.admin-login-paper {
+  background: white !important;
+  padding: 40px !important;
+  border-radius: 8px !important;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  box-shadow: none !important;
+}
+
+.admin-login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.admin-brand-name {
+  color: #333 !important;
+  font-weight: bold !important;
+  margin-bottom: 8px !important;
+  font-size: 28px !important;
+}
+
+.admin-login-title {
+  color: #666 !important;
+  margin-bottom: 4px !important;
+  font-size: 18px !important;
+}
+
+.admin-login-subtitle {
+  color: #888 !important;
+  font-size: 14px !important;
+  margin-bottom: 0 !important;
+}
+
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-login-field {
+  margin-bottom: 16px !important;
+}
+
+.admin-login-field:last-of-type {
+  margin-bottom: 24px !important;
+}
+
+.admin-login-field .MuiOutlinedInput-root {
+  font-size: 14px;
+}
+
+.admin-login-field .MuiInputLabel-root {
+  font-size: 14px;
+}
+
+.admin-login-button {
+  background-color: #333 !important;
+  color: white !important;
+  padding: 12px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  border-radius: 4px !important;
+  margin-bottom: 20px !important;
+}
+
+.admin-login-button:hover {
+  background-color: #555 !important;
+}
+
+.admin-login-button:disabled {
+  background-color: #ccc !important;
+}
+
+.admin-login-alert {
+  margin-bottom: 20px !important;
+  font-size: 14px !important;
+}
+
+.admin-login-demo {
+  text-align: center;
+}
+
+.admin-login-demo .MuiTypography-root {
+  color: #888 !important;
+  font-size: 12px !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .admin-login-container {
+    padding: 15px;
+  }
+  
+  .admin-login-paper {
+    padding: 30px !important;
+    max-width: 350px;
+  }
+  
+  .admin-brand-name {
+    font-size: 24px !important;
+  }
+  
+  .admin-login-title {
+    font-size: 16px !important;
+  }
+}

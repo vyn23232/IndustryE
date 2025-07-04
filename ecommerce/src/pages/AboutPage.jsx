@@ -1,5 +1,12 @@
 import React from 'react'
 import '../css/AboutPage.css'
+import StatCard from '../components/StatCard'
+import ValueCard from '../components/ValueCard'
+import TeamMemberCard from '../components/TeamMemberCard'
+import vynImage from '../assets/images/vyn.jpg'
+import markImage from '../assets/images/GaringProfile.png'
+import josefImage from '../assets/images/CajesProfile.png'
+
 
 const AboutPage = () => {
   const stats = [
@@ -33,10 +40,9 @@ const AboutPage = () => {
   ]
 
   const team = [
-    { name: 'Robert Miller', role: 'Founder & CEO', emoji: '👨‍💼' },
-    { name: 'Emma Watson', role: 'Head of Design', emoji: '👩‍🎨' },
-    { name: 'John Garcia', role: 'Customer Experience', emoji: '👨‍💻' },
-    { name: 'Lisa Chen', role: 'Supply Chain Manager', emoji: '👩‍🔧' }
+    { name: 'Jhovynn Aldrich Apurado', role: 'Founder & CEO', emoji: '👨‍💼', image: vynImage },
+    { name: 'Mark Christian Garing', role: 'Head of Design', emoji: '👩‍🎨', image: markImage},
+    { name: 'Josef Cajes', role: 'Customer Experience', emoji: '👨‍💻', image: josefImage },
   ]
 
   return (
@@ -92,10 +98,7 @@ const AboutPage = () => {
           <h2>Our Impact</h2>
           <div className="stats-grid">
             {stats.map((stat, index) => (
-              <div key={index} className="stat-card">
-                <div className="stat-number">{stat.number}</div>
-                <div className="stat-label">{stat.label}</div>
-              </div>
+              <StatCard key={index} stat={stat} />
             ))}
           </div>
         </div>
@@ -107,11 +110,7 @@ const AboutPage = () => {
           <h2>Our Values</h2>
           <div className="values-grid">
             {values.map((value, index) => (
-              <div key={index} className="value-card">
-                <div className="value-icon">{value.icon}</div>
-                <h3>{value.title}</h3>
-                <p>{value.description}</p>
-              </div>
+              <ValueCard key={index} value={value} />
             ))}
           </div>
         </div>
@@ -123,11 +122,7 @@ const AboutPage = () => {
           <h2>Meet Our Team</h2>
           <div className="team-grid">
             {team.map((member, index) => (
-              <div key={index} className="team-card">
-                <div className="team-avatar">{member.emoji}</div>
-                <h3>{member.name}</h3>
-                <p>{member.role}</p>
-              </div>
+              <TeamMemberCard key={index} member={member} />
             ))}
           </div>
         </div>
